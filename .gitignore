@@ -8,11 +8,20 @@
 *.war
 *.ear
 
+# IDE specific files
+.idea
+*.iml
+
+# build directory
+build
+
+# gradle directory
+.gradle
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
 .idea
-OneDrive.iml
 logs
 onedrive.key
 ignore.txt

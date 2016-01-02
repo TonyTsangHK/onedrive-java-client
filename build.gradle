@@ -1,0 +1,79 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'com.wouterbreukink.onedrive.Main'
+
+sourceCompatibility = 1.8
+version = file('src/main/resources/version').text
+
+repositories {
+    mavenCentral()
+}
+
+distZip {
+    duplicatesStrategy= DuplicatesStrategy.EXCLUDE
+    def baseDir = { archiveName - ".zip" }
+    into("${baseDir}/${rootProject.name}-${version}/bin") {
+        from 'customScripts'
+        include "*"
+    }
+}
+
+task copyToReleases(type: Copy) {
+    outputs.file file("latest-release/GitGrabber-latest.zip")
+    outputs.upToDateWhen { false }
+    from distZip.outputs
+    into("latest-release")
+    rename {
+        file -> "onedrive-java-client-latest.zip"
+    }
+}
+
+configure(copyToReleases) {
+    group = "distribution"
+    description = "Copy lastest distribution zip file to latest-releases"
+}
+
+copyToReleases.dependsOn distZip
+
+configurations {
+    //all*.exclude group: 'log4j', module: 'log4j'
+    all*.exclude group: 'commons-logging', module: 'commons-logging'
+}
+
+dependencies {
+    compile project(':JSON')
+    compile project(':JsonUtils')
+    compile project(':Utilities')
+	
+	compile group: 'commons-cli', name: 'commons-cli', version: '1.3.1'
+	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.3'
+	compile group: 'com.google.http-client', name: 'google-http-client', version: '1.20.0'
+	compile group: 'com.google.http-client', name: 'google-http-client-gson', version: '1.20.0'
+	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.10'
+    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: '1.7.10'
+    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.10'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.2'
+    compile group: 'args4j', name: 'args4j', version: '2.0.29'
+}
+
+sourceSets {
+    main {
+        output.resourcesDir = "$buildDir/classes/main"
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+    test {
+        java {
+            srcDir 'test/main/java'
+        }
+        resources {
+            srcDir 'test/main/resources'
+        }
+    }
+}

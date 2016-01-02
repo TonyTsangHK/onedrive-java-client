@@ -1,0 +1,39 @@
+{
+    "host": "github.com",
+    "user": "git",
+    "port": 7032,
+    "parentFolder": "../",
+    "mainProject": {
+        "name": "onedrive-java-client",
+        "local": "onedrive-java-client",
+        "remoteUrl": "TonyTsangHK/onedrive-java-client.git",
+        "defaultBranch": "master",
+        "updateWhenExists": true
+    },
+    "requiredProjects": [
+        {
+            "name": "Utilities",
+            "local": "Utilities",
+            "remoteUrl": "TonyTsangHK/Utilities.git",
+            "updateWhenExists": true
+        },
+        {
+            "name": "JSON",
+            "local": "JSON",
+            "remoteUrl": "TonyTsangHK/JSON.git",
+            "updateWhenExists": true
+        },
+        {
+            "name": "ByteUtils",
+            "local": "ByteUtils",
+            "remoteUrl": "TonyTsangHK/ByteUtils.git",
+            "updateWhenExists": true
+        },
+        {
+            "name": "JsonUtils",
+            "local": "JsonUtils",
+            "remoteUrl": "TonyTsangHK/JsonUtils.git",
+            "updateWhenExists": true
+        }
+    ]
+}
