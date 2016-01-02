@@ -22,7 +22,7 @@ build
 hs_err_pid*
 
 .idea
-logs
+/logs
 onedrive.key
 ignore.txt
 
