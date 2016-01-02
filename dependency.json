@@ -1,7 +1,6 @@
 {
     "host": "github.com",
     "user": "git",
-    "port": 7032,
     "parentFolder": "../",
     "mainProject": {
         "name": "onedrive-java-client",
