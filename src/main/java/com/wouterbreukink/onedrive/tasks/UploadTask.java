@@ -3,8 +3,9 @@ package com.wouterbreukink.onedrive.tasks;
 import com.google.api.client.util.Preconditions;
 import com.wouterbreukink.onedrive.client.OneDriveItem;
 import com.wouterbreukink.onedrive.client.OneDriveUploadSession;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import utils.string.FormatUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +15,7 @@ import static com.wouterbreukink.onedrive.LogUtils.readableFileSize;
 import static com.wouterbreukink.onedrive.LogUtils.readableTime;
 
 public class UploadTask extends Task {
-
-    private static final Logger log = LogManager.getLogger(UploadTask.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(UploadTask.class);
 
     private final OneDriveItem parent;
     private final File localFile;
@@ -69,7 +69,6 @@ public class UploadTask extends Task {
 
             OneDriveItem response;
             if (localFile.length() > getCommandLineOpts().getSplitAfter() * 1024 * 1024) {
-
                 int tryCount = 0;
                 OneDriveUploadSession session = api.startUploadSession(parent, localFile);
 
@@ -86,20 +85,24 @@ public class UploadTask extends Task {
 
                         long elapsedTimeInner = System.currentTimeMillis() - startTimeInner;
 
-                        log.info(String.format("Uploaded chunk (progress %.1f%%) of %s (%s/s) for file %s",
-                                ((double) session.getTotalUploaded() / session.getFile().length()) * 100,
-                                readableFileSize(session.getLastUploaded()),
-                                elapsedTimeInner > 0 ? readableFileSize(session.getLastUploaded() / (elapsedTimeInner / 1000d)) : 0,
-                                parent.getFullName() + localFile.getName()));
+                        log.info(
+                            "Uploaded chunk (progress {}) of {} ({}/s) for file {}",
+                            FormatUtils.formatNumber(((double) session.getTotalUploaded() / session.getFile().length()) * 100, 1),
+                            readableFileSize(session.getLastUploaded()),
+                            elapsedTimeInner > 0 ? readableFileSize(session.getLastUploaded() / (elapsedTimeInner / 1000d)) : 0,
+                            parent.getFullName() + localFile.getName()
+                        );
 
                         // After a successful upload we'll reset the tryCount
                         tryCount = 0;
 
                     } catch (IOException ex) {
-                        log.warn(String.format("Encountered '%s' while uploading chunk of %s for file %s",
-                                ex.getMessage(),
-                                readableFileSize(session.getLastUploaded()),
-                                parent.getFullName() + localFile.getName()));
+                        log.warn(
+                            "Encountered '{}' while uploading chunk of {} for file {}",
+                            ex.getMessage(),
+                            readableFileSize(session.getLastUploaded()),
+                            parent.getFullName() + localFile.getName()
+                        );
 
                         tryCount++;
                     }
@@ -117,12 +120,14 @@ public class UploadTask extends Task {
 
             long elapsedTime = System.currentTimeMillis() - startTime;
 
-            log.info(String.format("Uploaded %s in %s (%s/s) to %s file %s",
-                    readableFileSize(localFile.length()),
-                    readableTime(elapsedTime),
-                    elapsedTime > 0 ? readableFileSize(localFile.length() / (elapsedTime / 1000d)) : 0,
-                    replace ? "replace" : "new",
-                    response.getFullName()));
+            log.info(
+                "Uploaded {} in {} ({}/s) to {} file {}",
+                readableFileSize(localFile.length()),
+                readableTime(elapsedTime),
+                elapsedTime > 0 ? readableFileSize(localFile.length() / (elapsedTime / 1000d)) : 0,
+                replace ? "replace" : "new",
+                response.getFullName()
+            );
 
             reporter.fileUploaded(replace, localFile.length());
         }

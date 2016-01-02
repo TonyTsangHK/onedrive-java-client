@@ -10,8 +10,11 @@ import com.wouterbreukink.onedrive.tasks.CheckTask;
 import com.wouterbreukink.onedrive.tasks.Task;
 import com.wouterbreukink.onedrive.tasks.TaskReporter;
 import org.apache.commons.cli.ParseException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import utils.file.FileUtil;
+import utils.string.FormatUtils;
+import utils.string.StringUtil;
 
 import java.io.File;
 import java.util.concurrent.ExecutorService;
@@ -40,7 +43,10 @@ import static com.wouterbreukink.onedrive.LogUtils.readableFileSize;
  */
 public class Main {
 
-    private static final Logger log = LogManager.getLogger(Main.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+
+    // Program version, lazy loading
+    private static String version = null;
 
     public static void main(String[] args) throws Exception {
 
@@ -48,7 +54,7 @@ public class Main {
         try {
             CommandLineOpts.initialise(args);
         } catch (ParseException ex) {
-            log.error("Unable to parse command line arguments - " + ex.getMessage());
+            log.error("Unable to parse command line arguments - {}", ex.getMessage());
             CommandLineOpts.printHelp();
             return;
         }
@@ -59,15 +65,14 @@ public class Main {
         }
 
         if (getCommandLineOpts().version()) {
-            String version = getCommandLineOpts().getClass().getPackage().getImplementationVersion();
-            log.info("onedrive-java-client version " + (version != null ? version : "DEVELOPMENT"));
+            log.info("onedrive-java-client version {}", getVersion());
             return;
         }
 
         // Initialise a log file (if set)
         if (getCommandLineOpts().getLogFile() != null) {
             String logFileName = LogUtils.addFileLogger(getCommandLineOpts().getLogFile());
-            log.info(String.format("Writing log output to %s", logFileName));
+            log.info("Writing log output to {}", logFileName);
         }
 
         if (getCommandLineOpts().isAuthorise()) {
@@ -89,7 +94,7 @@ public class Main {
             authoriser = AuthorisationProvider.FACTORY.create(getCommandLineOpts().getKeyFile());
             authoriser.getAccessToken();
         } catch (OneDriveAPIException ex) {
-            log.error("Unable to authorise client: " + ex.getMessage());
+            log.error("Unable to authorise client: {}", ex.getMessage());
             log.error("Re-run the application with --authorise");
             return;
         }
@@ -113,22 +118,23 @@ public class Main {
         Drive primary = api.getDefaultDrive();
 
         // Report quotas
-        log.info(String.format("Using drive with id '%s' (%s). Usage %s of %s (%.2f%%)",
+        log.info("Using drive with id '{}' ({}). Usage {} of {} (%.2f%%)",
                 primary.getId(),
                 primary.getDriveType(),
                 readableFileSize(primary.getQuota().getUsed()),
                 readableFileSize(primary.getQuota().getTotal()),
-                ((double) primary.getQuota().getUsed() / primary.getQuota().getTotal()) * 100));
+                FormatUtils.formatNumber(((double) primary.getQuota().getUsed() / primary.getQuota().getTotal()) * 100)
+        );
 
         // Check the given root folder
         OneDriveItem rootFolder = api.getPath(getCommandLineOpts().getRemotePath());
 
         if (!rootFolder.isDirectory()) {
-            log.error(String.format("Specified root '%s' is not a folder", rootFolder.getFullName()));
+            log.error("Specified root '{}' is not a folder", rootFolder.getFullName());
             return;
         }
 
-        log.info(String.format("Starting at root folder '%s'", rootFolder.getFullName()));
+        log.info("Starting at root folder '{}'", rootFolder.getFullName());
 
         // Start synchronisation operation at the root
         final TaskQueue queue = new TaskQueue();
@@ -166,5 +172,16 @@ public class Main {
         reporter.report();
 
         System.exit(0);
+    }
+
+    public static String getVersion() {
+        if (version == null) {
+            version = FileUtil.getFileContent(Main.class.getResourceAsStream("/version"));
+            if (StringUtil.isEmptyString(version)) {
+                version = "UNKNOWN";
+            }
+        }
+
+        return version;
     }
 }

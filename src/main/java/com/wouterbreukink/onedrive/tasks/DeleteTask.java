@@ -2,15 +2,15 @@ package com.wouterbreukink.onedrive.tasks;
 
 import com.google.api.client.util.Preconditions;
 import com.wouterbreukink.onedrive.client.OneDriveItem;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 
 public class DeleteTask extends Task {
 
-    private static final Logger log = LogManager.getLogger(DeleteTask.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(DeleteTask.class.getName());
     private final OneDriveItem remoteFile;
     private final File localFile;
 
@@ -48,11 +48,11 @@ public class DeleteTask extends Task {
         if (localFile != null) {
             fileSystem.delete(localFile);
             reporter.localDeleted();
-            log.info("Deleted local file " + localFile.getPath());
+            log.info("Deleted local file {}", localFile.getPath());
         } else {
             api.delete(remoteFile);
             reporter.remoteDeleted();
-            log.info("Deleted remote file " + remoteFile.getFullName());
+            log.info("Deleted remote file {}", remoteFile.getFullName());
         }
     }
 }

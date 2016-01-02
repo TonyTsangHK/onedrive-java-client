@@ -29,9 +29,9 @@ git clone https://github.com/wooti/onedrive-java-client.git
 cd onedrive-java-client
 ```
 
-(2) Build the application using [Maven](http://maven.apache.org/)
+(2) Build the application using [gradle](http://gradle.org/)
 ```
-mvn clean package -DskipTests
+gradle distZip
 ```
 
 ## Usage
@@ -86,7 +86,8 @@ The following libraries have been used
 * [Google HTTP Client](https://developers.google.com/api-client-library/java/google-http-java-client/) - HTTP REST Client
 * [Google GSON](https://sites.google.com/site/gson/gson-user-guide) - JSON Parser
 * [Apache Commons CLI](https://commons.apache.org/proper/commons-cli/) - Command line arguments parser
-* [Apache Log4j2](http://logging.apache.org/log4j/2.x/) - Logging framework
+* [Apache Log4j2](http://logging.apache.org/log4j/2.x/) - Logging framework (alternative)
+* [Logback](http://logback.qos.ch/) - Logging framework (default)
 * [Apache HTTPComponents](http://hc.apache.org/httpcomponents-client-ga/) - Apache HTTP Client
 
 ## Future Plans

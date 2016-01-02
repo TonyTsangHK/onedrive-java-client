@@ -1,14 +1,14 @@
 package com.wouterbreukink.onedrive.tasks;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.wouterbreukink.onedrive.LogUtils.readableFileSize;
 import static com.wouterbreukink.onedrive.LogUtils.readableTime;
 
 public class TaskReporter {
 
-    private static final Logger log = LogManager.getLogger(TaskReporter.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TaskReporter.class);
 
     private int same;
     private int remoteDeleted;
@@ -80,27 +80,27 @@ public class TaskReporter {
     public synchronized void report() {
 
         if (errors > 0) {
-            log.error(String.format("%d tasks failed - see log for details", errors));
+            log.error("{} tasks failed - see log for details", errors);
         }
 
         if (same > 0) {
-            log.info(String.format("Skipped %d unchanged file%s", same, plural(same)));
+            log.info("Skipped {} unchanged file{}", same, plural(same));
         }
 
         if (skipped > 0) {
-            log.info(String.format("Skipped %d ignored file%s", skipped, plural(skipped)));
+            log.info("Skipped {} ignored file{}", skipped, plural(skipped));
         }
 
         if (localDeleted > 0) {
-            log.info(String.format("Deleted %d local file%s", localDeleted, plural(skipped)));
+            log.info("Deleted {} local file{}", localDeleted, plural(skipped));
         }
 
         if (remoteDeleted > 0) {
-            log.info(String.format("Deleted %d remote file%s", remoteDeleted, plural(skipped)));
+            log.info("Deleted {} remote file{}", remoteDeleted, plural(skipped));
         }
 
         if (propsUpdated > 0) {
-            log.info(String.format("Updated timestamps on %d file%s", propsUpdated, plural(skipped)));
+            log.info("Updated timestamps on {} file{}", propsUpdated, plural(skipped));
         }
 
         if (newUploaded > 0 || replaceUploaded > 0) {
@@ -161,7 +161,7 @@ public class TaskReporter {
         }
 
         long elapsed = System.currentTimeMillis() - startTime;
-        log.info(String.format("Elapsed time: %s", readableTime(elapsed)));
+        log.info("Elapsed time: {}", readableTime(elapsed));
     }
 
     private String plural(long same) {

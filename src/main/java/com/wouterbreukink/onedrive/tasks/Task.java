@@ -6,8 +6,8 @@ import com.wouterbreukink.onedrive.TaskQueue;
 import com.wouterbreukink.onedrive.client.OneDriveItem;
 import com.wouterbreukink.onedrive.client.OneDriveProvider;
 import com.wouterbreukink.onedrive.filesystem.FileSystemProvider;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import static com.wouterbreukink.onedrive.CommandLineOpts.getCommandLineOpts;
 
 public abstract class Task implements Runnable, Comparable<Task> {
 
-    private static final Logger log = LogManager.getLogger(Task.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Task.class);
     private static AtomicInteger taskIdCounter = new AtomicInteger(1);
     protected final TaskQueue queue;
     protected final OneDriveProvider api;
@@ -48,10 +48,12 @@ public abstract class Task implements Runnable, Comparable<Task> {
     private static boolean isSizeInvalid(String filename, long size) {
         int maxSizeKb = getCommandLineOpts().getMaxSizeKb();
         if (maxSizeKb > 0 && size > maxSizeKb * 1024) {
-            log.debug(String.format("Skipping file %s - size is %dKB (bigger than maximum of %dKB)",
-                    filename,
-                    size / 1024,
-                    maxSizeKb));
+            log.debug(
+                "Skipping file {} - size is {}KB (bigger than maximum of {}KB)",
+                filename,
+                size / 1024,
+                maxSizeKb
+            );
             return true;
         }
 
@@ -62,7 +64,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
         boolean ignored = isIgnored(remoteFile.getName() + (remoteFile.isDirectory() ? "/" : ""));
 
         if (ignored) {
-            log.debug(String.format("Skipping ignored remote file %s", remoteFile.getFullName()));
+            log.debug("Skipping ignored remote file {}", remoteFile.getFullName());
         }
 
         return ignored;
@@ -72,7 +74,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
         boolean ignored = isIgnored(localFile.getName() + (localFile.isDirectory() ? "/" : ""));
 
         if (ignored) {
-            log.debug(String.format("Skipping ignored local file %s", localFile.getPath()));
+            log.debug("Skipping ignored local file {}", localFile.getPath());
         }
 
         return ignored;
@@ -98,32 +100,32 @@ public abstract class Task implements Runnable, Comparable<Task> {
     public void run() {
         attempt++;
         try {
-            log.debug(String.format("Starting task %d:%d - %s", id, attempt, this.toString()));
+            log.debug("Starting task {}:{} - {}", id, attempt, this.toString());
             taskBody();
             return;
         } catch (HttpResponseException ex) {
 
             switch (ex.getStatusCode()) {
                 case 401:
-                    log.warn(String.format("Task %s encountered %s", getId(), ex.getMessage()));
+                    log.warn("Task {} encountered {}", getId(), ex.getMessage());
                     break;
                 case 500:
                 case 502:
                 case 503:
                 case 504:
-                    log.warn(String.format("Task %s encountered %s - sleeping 10 seconds", getId(), ex.getMessage()));
+                    log.warn("Task {} encountered {} - sleeping 10 seconds", getId(), ex.getMessage());
                     queue.suspend(10);
                     break;
                 case 429:
                 case 509:
-                    log.warn(String.format("Task %s encountered %s - sleeping 60 seconds", getId(), ex.getMessage()));
+                    log.warn("Task {} encountered {} - sleeping 60 seconds", getId(), ex.getMessage());
                     queue.suspend(60);
                     break;
                 default:
-                    log.warn(String.format("Task %s encountered %s", getId(), ex.getMessage()));
+                    log.warn("Task {} encountered {}", getId(), ex.getMessage());
             }
         } catch (Exception ex) {
-            log.error(String.format("Task %s encountered exception", getId()), ex);
+            log.error("Task {} encountered exception", getId(), ex);
             queue.suspend(1);
         }
 
@@ -131,7 +133,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
             queue.add(this);
         } else {
             reporter.error();
-            log.error(String.format("Task %d did not complete - %s", id, this.toString()));
+            log.error("Task {} did not complete - {}", id, this.toString());
         }
     }
 

@@ -4,8 +4,8 @@ import com.google.api.client.util.Maps;
 import com.google.api.client.util.Preconditions;
 import com.wouterbreukink.onedrive.client.OneDriveItem;
 import com.wouterbreukink.onedrive.filesystem.FileSystemProvider;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import static com.wouterbreukink.onedrive.CommandLineOpts.getCommandLineOpts;
 
 public class CheckTask extends Task {
 
-    private static final Logger log = LogManager.getLogger(UploadTask.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(UploadTask.class);
 
     private final OneDriveItem remoteFile;
     private final File localFile;
@@ -48,7 +48,7 @@ public class CheckTask extends Task {
 
             File[] files = localFile.listFiles();
             if (files == null) {
-                log.warn("Unable to recurse into local directory " + localFile.getPath());
+                log.warn("Unable to recurse into local directory {}", localFile.getPath());
                 reporter.skipped();
                 return;
             }

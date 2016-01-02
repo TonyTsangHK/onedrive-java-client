@@ -2,8 +2,8 @@ package com.wouterbreukink.onedrive.tasks;
 
 import com.google.api.client.util.Preconditions;
 import com.wouterbreukink.onedrive.client.OneDriveItem;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import static com.wouterbreukink.onedrive.LogUtils.readableTime;
 
 public class DownloadTask extends Task {
 
-    private static final Logger log = LogManager.getLogger(UploadTask.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(UploadTask.class);
     private final File parent;
     private final OneDriveItem remoteFile;
     private final boolean replace;
@@ -74,12 +74,12 @@ public class DownloadTask extends Task {
 
                 long elapsedTime = System.currentTimeMillis() - startTime;
 
-                log.info(String.format("Downloaded %s in %s (%s/s) to %s file %s",
+                log.info("Downloaded {} in {} ({}/s) to {} file {}",
                         readableFileSize(remoteFile.getSize()),
                         readableTime(elapsedTime),
                         elapsedTime > 0 ? readableFileSize(remoteFile.getSize() / (elapsedTime / 1000d)) : 0,
                         replace ? "replace" : "new",
-                        remoteFile.getFullName()));
+                        remoteFile.getFullName());
 
                 // Do a CRC check on the downloaded file
                 if (!fileSystem.verifyCrc(downloadFile, remoteFile.getCrc32())) {
@@ -93,10 +93,10 @@ public class DownloadTask extends Task {
 
                 fileSystem.replaceFile(new File(parent, remoteFile.getName()), downloadFile);
                 reporter.fileDownloaded(replace, remoteFile.getSize());
-            } catch (Throwable e) {
+            } catch (IOException e) {
                 if (downloadFile != null) {
                     if (!downloadFile.delete()) {
-                        log.warn("Unable to remove temporary file " + downloadFile.getPath());
+                        log.warn("Unable to remove temporary file {}", downloadFile.getPath());
                     }
                 }
 

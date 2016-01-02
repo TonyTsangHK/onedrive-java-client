@@ -12,8 +12,8 @@ import com.google.api.client.util.Key;
 import com.google.api.client.util.Preconditions;
 import com.wouterbreukink.onedrive.client.OneDriveAPIException;
 import com.wouterbreukink.onedrive.client.resources.Authorisation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -28,7 +28,7 @@ class OneDriveAuthorisationProvider implements AuthorisationProvider {
 
     static final HttpTransport HTTP_TRANSPORT = new ApacheHttpTransport();
     static final JsonFactory JSON_FACTORY = new GsonFactory();
-    private static final Logger log = LogManager.getLogger(OneDriveAuthorisationProvider.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(OneDriveAuthorisationProvider.class);
     private static final String clientSecret = "to8fZAGMvD7Jr-NSdY1eVm4V7eaAtV5B";
     private static final String clientId = "000000004015B68A";
     private Path keyFile;
@@ -84,7 +84,7 @@ class OneDriveAuthorisationProvider implements AuthorisationProvider {
 
         log.info("To authorise this application ou must generate an authorisation token");
         log.info("Open the following in a browser, sign on, wait until you are redirected to a blank page and then store the url in the address bar in your key file.");
-        log.info("Authorisation URL: " + authString);
+        log.info("Authorisation URL: {}", authString);
     }
 
     @Override
@@ -166,7 +166,7 @@ class OneDriveAuthorisationProvider implements AuthorisationProvider {
                     authorisation.getErrorDescription()));
         }
 
-        log.info("Fetched new authorisation token and refresh token for user " + authorisation.getUserId());
+        log.info("Fetched new authorisation token and refresh token for user {}", authorisation.getUserId());
         saveToken();
         lastFetched = new Date();
     }

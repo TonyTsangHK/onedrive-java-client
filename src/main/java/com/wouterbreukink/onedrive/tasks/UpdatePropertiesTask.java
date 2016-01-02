@@ -2,8 +2,8 @@ package com.wouterbreukink.onedrive.tasks;
 
 import com.google.api.client.util.Preconditions;
 import com.wouterbreukink.onedrive.client.OneDriveItem;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import static com.wouterbreukink.onedrive.CommandLineOpts.getCommandLineOpts;
 
 public class UpdatePropertiesTask extends Task {
 
-    private static final Logger log = LogManager.getLogger(UpdatePropertiesTask.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(UpdatePropertiesTask.class);
     private final OneDriveItem remoteFile;
     private final File localFile;
 
@@ -49,12 +49,12 @@ public class UpdatePropertiesTask extends Task {
 
                 api.updateFile(remoteFile, localCreatedDate, localModifiedDate);
 
-                log.info("Updated remote timestamps for item " + remoteFile.getFullName());
+                log.info("Updated remote timestamps for item {}", remoteFile.getFullName());
 
                 break;
             case DOWN:
                 fileSystem.setAttributes(localFile, remoteFile.getCreatedDateTime(), remoteFile.getLastModifiedDateTime());
-                log.info("Updated local timestamps for item " + remoteFile.getFullName());
+                log.info("Updated local timestamps for item {}", remoteFile.getFullName());
                 break;
             default:
                 throw new IllegalStateException("Unsupported direction " + getCommandLineOpts().getDirection());

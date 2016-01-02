@@ -2,8 +2,8 @@ package com.wouterbreukink.onedrive;
 
 import com.google.api.client.util.Sets;
 import org.apache.commons.cli.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class CommandLineOpts {
 
-    private static final Logger log = LogManager.getLogger(Main.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     private static final Options optionsToParse = buildOptions();
     private static final CommandLineOpts opts = new CommandLineOpts();
@@ -53,9 +53,9 @@ public class CommandLineOpts {
         CommandLine line = parser.parse(optionsToParse, args);
 
         for (Option opt : line.getOptions()) {
-            log.debug(String.format("Parsing command line option -%s, value = %s ",
+            log.debug("Parsing command line option -{}, value = {} ",
                     opt.getLongOpt() != null ? "-" + opt.getLongOpt() : opt.getOpt(),
-                    opt.getValue()));
+                    opt.getValue());
         }
 
         opts.help = line.hasOption("help");
