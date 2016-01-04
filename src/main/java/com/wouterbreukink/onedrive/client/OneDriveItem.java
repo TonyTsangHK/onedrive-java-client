@@ -1,6 +1,7 @@
 package com.wouterbreukink.onedrive.client;
 
 import com.google.api.client.util.Throwables;
+import com.wouterbreukink.onedrive.client.facets.HashesFacet;
 import com.wouterbreukink.onedrive.client.resources.Item;
 import com.wouterbreukink.onedrive.client.resources.ItemReference;
 import com.wouterbreukink.onedrive.client.serialization.JsonDateSerializer;
@@ -18,6 +19,10 @@ public interface OneDriveItem {
 
     String getFullName();
 
+    HashesFacet getHashes();
+
+    boolean hasHashes();
+
     long getCrc32();
 
     long getSize();
@@ -29,9 +34,7 @@ public interface OneDriveItem {
     OneDriveItem getParent();
 
     class FACTORY {
-
         public static OneDriveItem create(final OneDriveItem parent, final String name, final boolean isDirectory) {
-
             return new OneDriveItem() {
                 public String getId() {
                     return null;
@@ -47,6 +50,16 @@ public interface OneDriveItem {
 
                 public String getFullName() {
                     return parent.getFullName() + name + (isDirectory ? "/" : "");
+                }
+
+                @Override
+                public HashesFacet getHashes() {
+                    return null;
+                }
+
+                @Override
+                public boolean hasHashes() {
+                    return false;
                 }
 
                 @Override
@@ -78,7 +91,6 @@ public interface OneDriveItem {
 
         public static OneDriveItem create(final Item item) {
             return new OneDriveItem() {
-
                 private OneDriveItem parent = create(item.getParentReference());
 
                 @Override
@@ -99,6 +111,16 @@ public interface OneDriveItem {
                 @Override
                 public String getFullName() {
                     return parent.getFullName() + item.getName() + (isDirectory() ? "/" : "");
+                }
+
+                @Override
+                public HashesFacet getHashes() {
+                    return item.getFile().getHashes();
+                }
+
+                @Override
+                public boolean hasHashes() {
+                    return item.getFile() != null && item.getFile().getHashes() != null;
                 }
 
                 @Override
@@ -146,7 +168,6 @@ public interface OneDriveItem {
                 }
 
                 public String getFullName() {
-
                     if (parent.getPath() == null) {
                         return null;
                     }
@@ -158,6 +179,16 @@ public interface OneDriveItem {
                     } catch (UnsupportedEncodingException e) {
                         throw Throwables.propagate(e);
                     }
+                }
+
+                @Override
+                public HashesFacet getHashes() {
+                    return null;
+                }
+
+                @Override
+                public boolean hasHashes() {
+                    return false;
                 }
 
                 @Override

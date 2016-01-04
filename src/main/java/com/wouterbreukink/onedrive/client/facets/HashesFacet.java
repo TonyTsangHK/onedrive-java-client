@@ -3,7 +3,6 @@ package com.wouterbreukink.onedrive.client.facets;
 import com.google.api.client.util.Key;
 
 public class HashesFacet {
-
     @Key
     private String sha1Hash;
     @Key
@@ -15,6 +14,14 @@ public class HashesFacet {
 
     public String getCrc32Hash() {
         return crc32Hash;
+    }
+
+    public boolean hasCrc32Hash() {
+        return crc32Hash != null;
+    }
+
+    public boolean hasSha1Hash() {
+        return sha1Hash != null;
     }
 
     public long getCrc32() {

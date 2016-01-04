@@ -88,7 +88,7 @@ public class TaskReporter {
         }
 
         if (skipped > 0) {
-            log.info("Skipped {} ignored file{}", skipped, plural(skipped));
+            log.info("Skipped {} ignored/undownloadable file{}", skipped, plural(skipped));
         }
 
         if (localDeleted > 0) {

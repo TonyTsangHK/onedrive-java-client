@@ -144,7 +144,6 @@ class RWOneDriveProvider extends ROOneDriveProvider implements OneDriveProvider 
     }
 
     public void download(OneDriveItem item, File target) throws IOException {
-
         HttpRequest request = requestFactory.buildGetRequest(OneDriveUrl.content(item.getId()));
 
         FileOutputStream fos = null;

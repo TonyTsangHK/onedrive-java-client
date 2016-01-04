@@ -1,5 +1,7 @@
 package com.wouterbreukink.onedrive.filesystem;
 
+import com.wouterbreukink.onedrive.client.facets.HashesFacet;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -18,7 +20,9 @@ public interface FileSystemProvider {
 
     boolean verifyCrc(File file, long crc) throws IOException;
 
-    FileMatch verifyMatch(File file, long crc, long fileSize, Date created, Date lastModified) throws IOException;
+    boolean verifySha1Hash(File file, String sha1Hash) throws IOException;
+
+    FileMatch verifyMatch(File file, HashesFacet hashesFacet, long fileSize, Date created, Date lastModified) throws IOException;
 
     /**
      * Get the CRC32 Checksum for a file

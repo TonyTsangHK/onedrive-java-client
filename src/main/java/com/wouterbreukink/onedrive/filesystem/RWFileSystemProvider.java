@@ -88,4 +88,9 @@ class RWFileSystemProvider extends ROFileSystemProvider implements FileSystemPro
     public boolean verifyCrc(File file, long crc) throws IOException {
         return getChecksum(file) == crc;
     }
+
+    @Override
+    public boolean verifySha1Hash(File file, String sha1Hash) throws IOException {
+        return getSha1Hash(file).equals(sha1Hash);
+    }
 }

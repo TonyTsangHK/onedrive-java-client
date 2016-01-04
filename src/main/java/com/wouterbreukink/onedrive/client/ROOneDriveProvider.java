@@ -1,9 +1,6 @@
 package com.wouterbreukink.onedrive.client;
 
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.*;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonObjectParser;
@@ -81,7 +78,6 @@ class ROOneDriveProvider implements OneDriveProvider {
             }
 
             token = items.getNextToken();
-
         } while (token != null); // If we have a token for the next page we need to keep going
 
         return itemsToReturn.toArray(new OneDriveItem[itemsToReturn.size()]);

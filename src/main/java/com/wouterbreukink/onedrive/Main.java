@@ -118,7 +118,7 @@ public class Main {
         Drive primary = api.getDefaultDrive();
 
         // Report quotas
-        log.info("Using drive with id '{}' ({}). Usage {} of {} (%.2f%%)",
+        log.info("Using drive with id '{}' ({}). Usage {} of {} ({})",
                 primary.getId(),
                 primary.getDriveType(),
                 readableFileSize(primary.getQuota().getUsed()),

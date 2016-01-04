@@ -1,5 +1,8 @@
 package com.wouterbreukink.onedrive.filesystem;
 
+import com.wouterbreukink.onedrive.client.facets.HashesFacet;
+import utils.hash.HashUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -44,7 +47,13 @@ class ROFileSystemProvider implements FileSystemProvider {
         return true;
     }
 
-    public FileMatch verifyMatch(File file, long crc, long fileSize, Date created, Date lastModified) throws IOException {
+    @Override
+    public boolean verifySha1Hash(File file, String sha1Hash) throws IOException {
+        return true;
+    }
+
+    @Override
+    public FileMatch verifyMatch(File file, HashesFacet hashesFacet, long fileSize, Date created, Date lastModified) throws IOException {
 
         // Round to nearest second
         created = new Date((created.getTime() / 1000) * 1000);
@@ -65,13 +74,13 @@ class ROFileSystemProvider implements FileSystemProvider {
             return FileMatch.YES;
         }
 
-        long localCrc = getChecksum(file);
-        boolean crcMatches = crc == localCrc;
+        boolean hashMatch = (hashesFacet.hasCrc32Hash())? hashesFacet.getCrc32() == getChecksum(file) :
+            (hashesFacet.hasSha1Hash()) && hashesFacet.getSha1Hash().equals(getSha1Hash(file));
 
         // If the crc matches but the timestamps do not we won't upload the content again
-        if (crcMatches && !(modifiedMatches && createdMatches)) {
+        if (hashMatch && !(modifiedMatches && createdMatches)) {
             return FileMatch.CRC;
-        } else if (crcMatches) {
+        } else if (hashMatch) {
             return FileMatch.YES;
         } else {
             return FileMatch.NO;
@@ -96,6 +105,14 @@ class ROFileSystemProvider implements FileSystemProvider {
             if (cis != null) {
                 cis.close();
             }
+        }
+    }
+
+    public String getSha1Hash(File file) {
+        try {
+            return HashUtil.getFileSha1Hash(file);
+        } catch (IOException e) {
+            return "";
         }
     }
 }
