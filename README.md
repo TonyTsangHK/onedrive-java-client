@@ -4,28 +4,32 @@ A cross-platform command line client for Microsoft OneDrive written in Java 7.
 
 __This application is currently in BETA - use with caution__
 
+__This is a forked project from [wooti/onedrive-java-client](https://github.com/wooti/onedrive-java-client)__
+
 ## Installation
 
-(1) Download and extract the [latest release](https://github.com/wooti/onedrive-java-client/releases/download/0.2/onedrive-java-client.zip).
+(1) Download and extract the [latest release](https://github.com/TonyTsangHK/onedrive-java-client/releases/download/0.2.2/onedrive-java-client-0.2.2.zip).
+
+(1.1) (optional) Setup path variable to include the bin folder of extracted files
 
 (2) Authorise the application
 
 An authorisation token must be created to grant the application secure access to OneDrive. Run the following command to generate the authorisation URL:
 ```
-java -jar onedrive-java-client.jar --authorise
+bin/onedrive-java-client.sh --authorise
 ```
 Open the URL in your browser, and wait for it to redirect you to a blank page. Copy and paste the address shown in your address bar into your keyfile (default file ``onedrive.key``).
 
 (3) Start synchronising folders
 ```
-java -jar onedrive-java-client.jar --direction UP --local . --remote MyTargetFolder/
+bin/onedrive-java-client.sh --direction UP --local . --remote MyTargetFolder/
 ```
 
 ## Build
 
 (1) Grab the latest source code
 ```
-git clone https://github.com/wooti/onedrive-java-client.git
+git clone https://github.com/TonyTsangHK/onedrive-java-client.git
 cd onedrive-java-client
 ```
 
