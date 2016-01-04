@@ -3,7 +3,6 @@ package com.wouterbreukink.onedrive.client.resources;
 import com.google.api.client.util.Key;
 
 public class IdentitySet {
-
     @Key
     private Identity user;
     @Key

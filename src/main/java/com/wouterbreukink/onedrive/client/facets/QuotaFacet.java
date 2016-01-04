@@ -3,7 +3,6 @@ package com.wouterbreukink.onedrive.client.facets;
 import com.google.api.client.util.Key;
 
 public class QuotaFacet {
-
     @Key
     private long total;
     @Key

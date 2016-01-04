@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 import static com.wouterbreukink.onedrive.CommandLineOpts.getCommandLineOpts;
 
 public class UpdatePropertiesTask extends Task {
-
     private static final Logger log = LoggerFactory.getLogger(UpdatePropertiesTask.class);
     private final OneDriveItem remoteFile;
     private final File localFile;

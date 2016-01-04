@@ -13,8 +13,7 @@ import java.nio.file.Paths;
 import java.util.Set;
 
 public class CommandLineOpts {
-
-    private static final Logger log = LoggerFactory.getLogger(Main.class);
+    private static final Logger log = LoggerFactory.getLogger(CommandLineOpts.class);
 
     private static final Options optionsToParse = buildOptions();
     private static final CommandLineOpts opts = new CommandLineOpts();

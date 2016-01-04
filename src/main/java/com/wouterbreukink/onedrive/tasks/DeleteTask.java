@@ -9,13 +9,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class DeleteTask extends Task {
-
     private static final Logger log = LoggerFactory.getLogger(DeleteTask.class.getName());
     private final OneDriveItem remoteFile;
     private final File localFile;
 
     public DeleteTask(TaskOptions options, OneDriveItem remoteFile) {
-
         super(options);
 
         this.remoteFile = Preconditions.checkNotNull(remoteFile);

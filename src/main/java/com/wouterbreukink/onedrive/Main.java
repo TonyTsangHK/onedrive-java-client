@@ -12,11 +12,14 @@ import com.wouterbreukink.onedrive.tasks.TaskReporter;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.data.ImmutableMap;
 import utils.file.FileUtil;
+import utils.json.parser.JsonParser;
 import utils.string.FormatUtils;
 import utils.string.StringUtil;
 
 import java.io.File;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,14 +45,26 @@ import static com.wouterbreukink.onedrive.LogUtils.readableFileSize;
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 public class Main {
-
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     // Program version, lazy loading
     private static String version = null;
 
-    public static void main(String[] args) throws Exception {
+    private static final ImmutableMap<String, Object> APP_CONFIG_MAP;
 
+    static {
+        Map<String, Object> map = JsonParser.getInstance().parseMap(
+            FileUtil.getFileContent(Main.class.getResourceAsStream("/app.json"))
+        );
+
+        if (map != null) {
+            APP_CONFIG_MAP = new ImmutableMap<>(map);
+        } else {
+            APP_CONFIG_MAP = new ImmutableMap<>();
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
         // Parse command line args
         try {
             CommandLineOpts.initialise(args);
@@ -183,5 +198,9 @@ public class Main {
         }
 
         return version;
+    }
+
+    public static Object getAppConfig(String key) {
+        return APP_CONFIG_MAP.get(key);
     }
 }

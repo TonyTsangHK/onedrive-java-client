@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.List;
 
 class ROOneDriveProvider implements OneDriveProvider {
-
     static final HttpTransport HTTP_TRANSPORT = new ApacheHttpTransport();
     static final JsonFactory JSON_FACTORY = new GsonFactory();
 
@@ -26,9 +25,8 @@ class ROOneDriveProvider implements OneDriveProvider {
 
     public ROOneDriveProvider(final AuthorisationProvider authoriser) {
         requestFactory =
-                HTTP_TRANSPORT.createRequestFactory(new HttpRequestInitializer() {
-                    @Override
-                    public void initialize(HttpRequest request) {
+                HTTP_TRANSPORT.createRequestFactory(
+                    request -> {
                         request.setParser(new JsonObjectParser(JSON_FACTORY));
                         try {
                             request.getHeaders().setAuthorization("bearer " + authoriser.getAccessToken());
@@ -38,7 +36,7 @@ class ROOneDriveProvider implements OneDriveProvider {
 
                         request.setUnsuccessfulResponseHandler(new OneDriveResponseHandler(authoriser));
                     }
-                });
+                );
     }
 
     public Drive getDefaultDrive() throws IOException {
@@ -53,7 +51,6 @@ class ROOneDriveProvider implements OneDriveProvider {
     }
 
     public OneDriveItem[] getChildren(OneDriveItem parent) throws IOException {
-
         if (!parent.isDirectory()) {
             throw new IllegalArgumentException("Specified Item is not a folder");
         }
@@ -90,7 +87,6 @@ class ROOneDriveProvider implements OneDriveProvider {
     }
 
     public OneDriveItem replaceFile(OneDriveItem parent, File file) throws IOException {
-
         if (!parent.isDirectory()) {
             throw new IllegalArgumentException("Parent is not a folder");
         }
@@ -99,7 +95,6 @@ class ROOneDriveProvider implements OneDriveProvider {
     }
 
     public OneDriveItem uploadFile(OneDriveItem parent, File file) throws IOException {
-
         if (!parent.isDirectory()) {
             throw new IllegalArgumentException("Parent is not a folder");
         }

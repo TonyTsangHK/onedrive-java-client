@@ -3,7 +3,6 @@ package com.wouterbreukink.onedrive.client.resources;
 import com.google.api.client.util.Key;
 
 public class Authorisation {
-
     @Key("token_type")
     private String tokenType;
     @Key("expires_in")

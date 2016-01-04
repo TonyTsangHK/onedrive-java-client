@@ -4,7 +4,6 @@ import com.google.api.client.util.Key;
 import com.wouterbreukink.onedrive.client.facets.QuotaFacet;
 
 public class Drive {
-
     @Key
     private String id;
 

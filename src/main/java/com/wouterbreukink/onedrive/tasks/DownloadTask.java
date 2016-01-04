@@ -13,7 +13,6 @@ import static com.wouterbreukink.onedrive.LogUtils.readableFileSize;
 import static com.wouterbreukink.onedrive.LogUtils.readableTime;
 
 public class DownloadTask extends Task {
-
     private static final Logger log = LoggerFactory.getLogger(DownloadTask.class);
     private final File parent;
     private final OneDriveItem remoteFile;

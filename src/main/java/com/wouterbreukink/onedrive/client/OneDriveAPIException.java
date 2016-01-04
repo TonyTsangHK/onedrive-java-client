@@ -3,7 +3,6 @@ package com.wouterbreukink.onedrive.client;
 import java.io.IOException;
 
 public class OneDriveAPIException extends IOException {
-
     private final int code;
 
     public OneDriveAPIException(int code, String message) {

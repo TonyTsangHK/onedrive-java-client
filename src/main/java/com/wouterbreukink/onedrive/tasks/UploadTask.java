@@ -45,7 +45,6 @@ public class UploadTask extends Task {
 
     @Override
     protected void taskBody() throws IOException {
-
         if (isIgnored(localFile)) {
             reporter.skipped();
             return;
@@ -113,7 +112,6 @@ public class UploadTask extends Task {
                 }
 
                 response = session.getItem();
-
             } else {
                 response = replace ? api.replaceFile(parent, localFile) : api.uploadFile(parent, localFile);
             }

@@ -2,15 +2,23 @@ package com.wouterbreukink.onedrive.client;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.util.Key;
+import com.wouterbreukink.onedrive.Main;
+import utils.data.DataManipulator;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 class OneDriveUrl extends GenericUrl {
-
-    private static final String rootUrl = "https://api.onedrive.com/v1.0";
+    private static final String rootUrl;
     @Key("$skiptoken")
     private String token;
+
+    static {
+        String apiUrl = DataManipulator.extractString(Main.getAppConfig("apiUrl"), ""),
+            apiVersion = DataManipulator.extractString(Main.getAppConfig("apiVersion"), "");
+
+        rootUrl = apiUrl + apiVersion;
+    }
 
     public OneDriveUrl(String encodedUrl) {
         super(encodedUrl);

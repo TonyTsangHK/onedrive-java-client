@@ -13,7 +13,6 @@ import com.wouterbreukink.onedrive.client.authoriser.AuthorisationProvider;
 import java.io.IOException;
 
 class OneDriveResponseHandler implements HttpUnsuccessfulResponseHandler {
-
     private final Sleeper sleeper = Sleeper.DEFAULT;
     private final BackOff backOff = new ExponentialBackOff();
     private final AuthorisationProvider authoriser;
@@ -24,7 +23,6 @@ class OneDriveResponseHandler implements HttpUnsuccessfulResponseHandler {
 
     @Override
     public boolean handleResponse(HttpRequest request, HttpResponse response, boolean supportsRetry) throws IOException {
-
         if (!supportsRetry) {
             return false;
         }
@@ -49,5 +47,4 @@ class OneDriveResponseHandler implements HttpUnsuccessfulResponseHandler {
     public boolean isRequired(HttpResponse httpResponse) {
         return httpResponse.getStatusCode() / 100 == 5 || httpResponse.getStatusCode() == 429;
     }
-
 }

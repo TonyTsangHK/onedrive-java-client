@@ -7,7 +7,6 @@ import static com.wouterbreukink.onedrive.LogUtils.readableFileSize;
 import static com.wouterbreukink.onedrive.LogUtils.readableTime;
 
 public class TaskReporter {
-
     private static final Logger log = LoggerFactory.getLogger(TaskReporter.class);
 
     private int same;

@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static com.wouterbreukink.onedrive.CommandLineOpts.getCommandLineOpts;
 
 public abstract class Task implements Runnable, Comparable<Task> {
-
     private static final Logger log = LoggerFactory.getLogger(Task.class);
     private static AtomicInteger taskIdCounter = new AtomicInteger(1);
     protected final TaskQueue queue;

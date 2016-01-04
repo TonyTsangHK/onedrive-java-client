@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.Date;
 
 public interface OneDriveProvider {
-
     // Read only operations
 
     Drive getDefaultDrive() throws IOException;
@@ -38,7 +37,6 @@ public interface OneDriveProvider {
     void delete(OneDriveItem remoteFile) throws IOException;
 
     class FACTORY {
-
         public static OneDriveProvider readOnlyApi(AuthorisationProvider authoriser) {
             return new ROOneDriveProvider(authoriser);
         }

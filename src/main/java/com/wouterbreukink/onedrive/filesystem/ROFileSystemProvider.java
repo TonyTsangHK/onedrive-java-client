@@ -16,7 +16,6 @@ import java.util.zip.CheckedInputStream;
 import static com.wouterbreukink.onedrive.CommandLineOpts.getCommandLineOpts;
 
 class ROFileSystemProvider implements FileSystemProvider {
-
     public void delete(File file) throws IOException {
         // Do nothing
     }
@@ -54,7 +53,6 @@ class ROFileSystemProvider implements FileSystemProvider {
 
     @Override
     public FileMatch verifyMatch(File file, HashesFacet hashesFacet, long fileSize, Date created, Date lastModified) throws IOException {
-
         // Round to nearest second
         created = new Date((created.getTime() / 1000) * 1000);
         lastModified = new Date((lastModified.getTime() / 1000) * 1000);
@@ -88,7 +86,6 @@ class ROFileSystemProvider implements FileSystemProvider {
     }
 
     public long getChecksum(File file) throws IOException {
-
         // Compute CRC32 checksum
         CheckedInputStream cis = null;
 

@@ -3,7 +3,6 @@ package com.wouterbreukink.onedrive.client.facets;
 import com.google.api.client.util.Key;
 
 public class FileSystemInfoFacet {
-
     @Key
     private String createdDateTime;
     @Key

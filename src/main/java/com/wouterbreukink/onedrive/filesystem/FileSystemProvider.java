@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Date;
 
 public interface FileSystemProvider {
-
     void delete(File file) throws IOException;
 
     File createFolder(File file, String name) throws IOException;
@@ -40,7 +39,6 @@ public interface FileSystemProvider {
     }
 
     class FACTORY {
-
         public static FileSystemProvider readOnlyProvider() {
             return new ROFileSystemProvider();
         }

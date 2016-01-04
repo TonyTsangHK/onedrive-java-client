@@ -14,7 +14,6 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 
 public class LogUtils {
-
     private LogUtils() {}
 
     public static String readableFileSize(double size) {

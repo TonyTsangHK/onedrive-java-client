@@ -3,7 +3,6 @@ package com.wouterbreukink.onedrive.client.resources;
 import com.google.api.client.util.Key;
 
 public class ItemReference {
-
     @Key
     private String driveId;
     @Key

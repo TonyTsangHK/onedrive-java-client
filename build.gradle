@@ -19,6 +19,10 @@ distZip {
     }
 }
 
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 task copyToReleases(type: Copy) {
     outputs.file file("latest-release/GitGrabber-latest.zip")
     outputs.upToDateWhen { false }

@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class JsonDateSerializer {
-
     public static final JsonDateSerializer INSTANCE = new JsonDateSerializer();
     private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private static final DateFormat df2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");

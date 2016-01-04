@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public interface AuthorisationProvider {
-
     String getAccessToken() throws IOException;
 
     void refresh() throws IOException;

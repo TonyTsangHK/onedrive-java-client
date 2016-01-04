@@ -7,7 +7,6 @@ import com.wouterbreukink.onedrive.client.facets.FileSystemInfoFacet;
 import com.wouterbreukink.onedrive.client.facets.FolderFacet;
 
 public class Item {
-
     @Key
     private String id;
     @Key

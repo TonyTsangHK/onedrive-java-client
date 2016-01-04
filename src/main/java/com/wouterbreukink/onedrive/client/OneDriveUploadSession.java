@@ -6,7 +6,6 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 
 public class OneDriveUploadSession {
-
     // Upload in chunks of 5MB as per MS recommendation
     private static final int CHUNK_SIZE = 5 * 1024 * 1024;
     private final File file;
@@ -49,7 +48,6 @@ public class OneDriveUploadSession {
     }
 
     public byte[] getChunk() throws IOException {
-
         byte[] bytes = new byte[CHUNK_SIZE];
 
         raf.seek(totalUploaded);

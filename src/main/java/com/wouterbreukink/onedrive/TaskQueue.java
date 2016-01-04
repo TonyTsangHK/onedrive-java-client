@@ -6,7 +6,6 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TaskQueue {
-
     private final PriorityBlockingQueue<Task> queue = new PriorityBlockingQueue<Task>();
     private final Object suspendedMonitor = new Object();
     private final Object doneMonitor = new Object();
@@ -19,7 +18,6 @@ public class TaskQueue {
     }
 
     public Task take() throws InterruptedException {
-
         // Wait for the queue to be active
         synchronized (suspendedMonitor) {
             while (suspended) {
@@ -47,9 +45,7 @@ public class TaskQueue {
     }
 
     public void suspend(int seconds) {
-
         synchronized (suspendedMonitor) {
-
             if (suspended) {
                 return;
             }

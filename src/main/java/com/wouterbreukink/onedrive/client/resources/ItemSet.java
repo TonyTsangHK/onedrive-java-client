@@ -6,7 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ItemSet {
-
     @Key
     private Item[] value;
     @Key("@odata.nextLink")
@@ -17,7 +16,6 @@ public class ItemSet {
     }
 
     public String getNextToken() {
-
         if (nextPage == null) {
             return null;
         }

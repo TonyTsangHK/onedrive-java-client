@@ -16,13 +16,13 @@ __This is a forked project from [wooti/onedrive-java-client](https://github.com/
 
 An authorisation token must be created to grant the application secure access to OneDrive. Run the following command to generate the authorisation URL:
 ```
-bin/onedrive-java-client.sh --authorise
+bin/onedrive-java-client --authorise
 ```
 Open the URL in your browser, and wait for it to redirect you to a blank page. Copy and paste the address shown in your address bar into your keyfile (default file ``onedrive.key``).
 
 (3) Start synchronising folders
 ```
-bin/onedrive-java-client.sh --direction UP --local . --remote MyTargetFolder/
+bin/onedrive-java-client --direction UP --local . --remote MyTargetFolder/
 ```
 
 ## Build
@@ -32,6 +32,8 @@ bin/onedrive-java-client.sh --direction UP --local . --remote MyTargetFolder/
 git clone https://github.com/TonyTsangHK/onedrive-java-client.git
 cd onedrive-java-client
 ```
+
+(1.1) (optional) If you would like, edit src/main/java/resources/app.json, replace the client app id and secret for your own app.
 
 (2) Build the application using [gradle](http://gradle.org/)
 ```

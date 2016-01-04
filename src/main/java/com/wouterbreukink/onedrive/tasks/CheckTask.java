@@ -14,8 +14,7 @@ import java.util.Map;
 import static com.wouterbreukink.onedrive.CommandLineOpts.getCommandLineOpts;
 
 public class CheckTask extends Task {
-
-    private static final Logger log = LoggerFactory.getLogger(UploadTask.class);
+    private static final Logger log = LoggerFactory.getLogger(CheckTask.class);
 
     private final OneDriveItem remoteFile;
     private final File localFile;
