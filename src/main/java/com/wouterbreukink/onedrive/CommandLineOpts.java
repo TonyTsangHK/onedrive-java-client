@@ -1,16 +1,16 @@
 package com.wouterbreukink.onedrive;
 
-import com.google.api.client.util.Sets;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.file.path.PathPatternMatcherGroup;
+import utils.file.path.PathPatternMatcherGroupParser;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Set;
 
 public class CommandLineOpts {
     private static final Logger log = LoggerFactory.getLogger(CommandLineOpts.class);
@@ -36,7 +36,7 @@ public class CommandLineOpts {
     private boolean dryRun = false;
     private String logFile = null;
     private int splitAfter = 5;
-    private Set<String> ignored = null;
+    private PathPatternMatcherGroup ignoredMatcherGroup = null;
     private boolean authorise = false;
 
     public static CommandLineOpts getCommandLineOpts() {
@@ -47,7 +47,6 @@ public class CommandLineOpts {
     }
 
     public static void initialise(String[] args) throws ParseException {
-
         CommandLineParser parser = new DefaultParser();
         CommandLine line = parser.parse(optionsToParse, args);
 
@@ -115,8 +114,9 @@ public class CommandLineOpts {
             }
 
             try {
-                opts.ignored = Sets.newHashSet();
-                opts.ignored.addAll(Files.readAllLines(ignoreFile, Charset.defaultCharset()));
+                opts.ignoredMatcherGroup = PathPatternMatcherGroupParser.getInstance().parse(
+                    new String(Files.readAllBytes(ignoreFile), Charset.defaultCharset())
+                );
             } catch (IOException e) {
                 throw new ParseException(e.getMessage());
             }
@@ -314,8 +314,8 @@ public class CommandLineOpts {
         return splitAfter;
     }
 
-    public Set<String> getIgnored() {
-        return ignored;
+    public PathPatternMatcherGroup getIgnoredMatcherGroup() {
+        return ignoredMatcherGroup;
     }
 
     public boolean isAuthorise() {

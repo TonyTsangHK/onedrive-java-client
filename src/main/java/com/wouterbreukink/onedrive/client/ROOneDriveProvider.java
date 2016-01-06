@@ -60,7 +60,6 @@ class ROOneDriveProvider implements OneDriveProvider {
         String token = null;
 
         do {
-
             OneDriveUrl url = OneDriveUrl.children(parent.getId());
 
             if (token != null) {

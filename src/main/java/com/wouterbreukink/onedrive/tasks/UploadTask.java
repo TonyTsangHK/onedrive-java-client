@@ -18,15 +18,16 @@ public class UploadTask extends Task {
     private static final Logger log = LoggerFactory.getLogger(UploadTask.class);
 
     private final OneDriveItem parent;
-    private final File localFile;
+    private final File localFile, localRoot;
     private final boolean replace;
 
-    public UploadTask(TaskOptions options, OneDriveItem parent, File localFile, boolean replace) {
+    public UploadTask(TaskOptions options, OneDriveItem parent, File localRoot, File localFile, boolean replace) {
 
         super(options);
 
         this.parent = Preconditions.checkNotNull(parent);
         this.localFile = Preconditions.checkNotNull(localFile);
+        this.localRoot = Preconditions.checkNotNull(localRoot);
         this.replace = replace;
 
         if (!parent.isDirectory()) {
@@ -45,7 +46,7 @@ public class UploadTask extends Task {
 
     @Override
     protected void taskBody() throws IOException {
-        if (isIgnored(localFile)) {
+        if (isIgnored(localRoot, localFile)) {
             reporter.skipped();
             return;
         }
@@ -55,7 +56,7 @@ public class UploadTask extends Task {
 
             //noinspection ConstantConditions
             for (File f : localFile.listFiles()) {
-                queue.add(new UploadTask(getTaskOptions(), newParent, f, false));
+                queue.add(new UploadTask(getTaskOptions(), newParent, localRoot, f, false));
             }
         } else {
 

@@ -153,7 +153,15 @@ public class Main {
 
         // Start synchronisation operation at the root
         final TaskQueue queue = new TaskQueue();
-        queue.add(new CheckTask(new Task.TaskOptions(queue, api, fileSystem, reporter), rootFolder, new File(getCommandLineOpts().getLocalPath())));
+
+        File localFile = new File(getCommandLineOpts().getLocalPath());
+
+        queue.add(
+            new CheckTask(
+                new Task.TaskOptions(queue, api, fileSystem, reporter),
+                rootFolder, rootFolder, localFile, localFile
+            )
+        );
 
         // Get a bunch of threads going
         ExecutorService executorService = Executors.newFixedThreadPool(getCommandLineOpts().getThreads());

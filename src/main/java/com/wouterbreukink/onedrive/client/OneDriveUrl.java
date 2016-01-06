@@ -4,6 +4,7 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.util.Key;
 import com.wouterbreukink.onedrive.Main;
 import utils.data.DataManipulator;
+import utils.string.StringUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -49,7 +50,13 @@ class OneDriveUrl extends GenericUrl {
     }
 
     public static OneDriveUrl getPath(String path) {
-        return new OneDriveUrl(rootUrl + "/drive/root:/" + encode(path).replace("%5C", "/"));
+        // Add :root for remote root reference, since / may resolve to other path at MINGW console.
+        if (StringUtil.stringMatchOnce(path, "/", ":root")) {
+            // Allow root path to be synced
+            return new OneDriveUrl(rootUrl + "/drive/root:/");
+        } else {
+            return new OneDriveUrl(rootUrl + "/drive/root:/" + encode(path).replace("%5C", "/"));
+        }
     }
 
     public static GenericUrl item(String id) {

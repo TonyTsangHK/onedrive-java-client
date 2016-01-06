@@ -15,14 +15,15 @@ import static com.wouterbreukink.onedrive.LogUtils.readableTime;
 public class DownloadTask extends Task {
     private static final Logger log = LoggerFactory.getLogger(DownloadTask.class);
     private final File parent;
-    private final OneDriveItem remoteFile;
+    private final OneDriveItem remoteFile, remoteRoot;
     private final boolean replace;
 
-    public DownloadTask(TaskOptions options, File parent, OneDriveItem remoteFile, boolean replace) {
+    public DownloadTask(TaskOptions options, File parent, OneDriveItem remoteRoot, OneDriveItem remoteFile, boolean replace) {
         super(options);
 
         this.parent = Preconditions.checkNotNull(parent);
         this.remoteFile = Preconditions.checkNotNull(remoteFile);
+        this.remoteRoot = Preconditions.checkNotNull(remoteRoot);
         this.replace = Preconditions.checkNotNull(replace);
 
         if (!parent.isDirectory()) {
@@ -47,7 +48,7 @@ public class DownloadTask extends Task {
 
     @Override
     protected void taskBody() throws IOException {
-        if (isIgnored(remoteFile)) {
+        if (isIgnored(remoteRoot, remoteFile)) {
             reporter.skipped();
             return;
         }
@@ -56,7 +57,7 @@ public class DownloadTask extends Task {
             File newParent = fileSystem.createFolder(parent, remoteFile.getName());
 
             for (OneDriveItem item : api.getChildren(remoteFile)) {
-                queue.add(new DownloadTask(getTaskOptions(), newParent, item, false));
+                queue.add(new DownloadTask(getTaskOptions(), newParent, remoteRoot, item, false));
             }
         } else {
             if (isSizeInvalid(remoteFile)) {

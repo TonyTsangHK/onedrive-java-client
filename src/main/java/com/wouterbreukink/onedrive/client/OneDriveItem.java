@@ -5,12 +5,16 @@ import com.wouterbreukink.onedrive.client.facets.HashesFacet;
 import com.wouterbreukink.onedrive.client.resources.Item;
 import com.wouterbreukink.onedrive.client.resources.ItemReference;
 import com.wouterbreukink.onedrive.client.serialization.JsonDateSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Date;
 
 public interface OneDriveItem {
+    Logger log = LoggerFactory.getLogger(OneDriveItem.class);
+
     String getId();
 
     boolean isDirectory();
@@ -49,7 +53,11 @@ public interface OneDriveItem {
                 }
 
                 public String getFullName() {
-                    return parent.getFullName() + name + (isDirectory ? "/" : "");
+                    if (parent == null) {
+                        return "/";
+                    } else {
+                        return parent.getFullName() + name + (isDirectory ? "/" : "");
+                    }
                 }
 
                 @Override
@@ -91,7 +99,8 @@ public interface OneDriveItem {
 
         public static OneDriveItem create(final Item item) {
             return new OneDriveItem() {
-                private OneDriveItem parent = create(item.getParentReference());
+                // If parent reference is null set parent to null.
+                private OneDriveItem parent = (item.getParentReference() == null)? null : create(item.getParentReference());
 
                 @Override
                 public String getId() {
@@ -110,7 +119,11 @@ public interface OneDriveItem {
 
                 @Override
                 public String getFullName() {
-                    return parent.getFullName() + item.getName() + (isDirectory() ? "/" : "");
+                    if (parent == null) {
+                        return "/";
+                    } else {
+                        return parent.getFullName() + item.getName() + (isDirectory() ? "/" : "");
+                    }
                 }
 
                 @Override
@@ -168,16 +181,20 @@ public interface OneDriveItem {
                 }
 
                 public String getFullName() {
-                    if (parent.getPath() == null) {
-                        return null;
-                    }
+                    if (parent == null) {
+                        return "/";
+                    } else {
+                        if (parent.getPath() == null) {
+                            return null;
+                        }
 
-                    int index = parent.getPath().indexOf(':');
+                        int index = parent.getPath().indexOf(':');
 
-                    try {
-                        return URLDecoder.decode(index > 0 ? parent.getPath().substring(index + 1) : parent.getPath(), "UTF-8") + "/";
-                    } catch (UnsupportedEncodingException e) {
-                        throw Throwables.propagate(e);
+                        try {
+                            return URLDecoder.decode(index > 0 ? parent.getPath().substring(index + 1) : parent.getPath(), "UTF-8") + "/";
+                        } catch (UnsupportedEncodingException e) {
+                            throw Throwables.propagate(e);
+                        }
                     }
                 }
 

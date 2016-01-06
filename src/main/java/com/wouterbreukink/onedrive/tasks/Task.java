@@ -8,6 +8,8 @@ import com.wouterbreukink.onedrive.client.OneDriveProvider;
 import com.wouterbreukink.onedrive.filesystem.FileSystemProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.file.FileUtil;
+import utils.file.path.PathPatternMatcherGroup;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,29 +61,60 @@ public abstract class Task implements Runnable, Comparable<Task> {
         return false;
     }
 
-    protected static boolean isIgnored(OneDriveItem remoteFile) {
-        boolean ignored = isIgnored(remoteFile.getName() + (remoteFile.isDirectory() ? "/" : ""));
+    protected static boolean isIgnored(OneDriveItem rootFile, OneDriveItem remoteFile) {
+        String rootFullPath = rootFile.getFullName(), fileFullPath = remoteFile.getFullName();
 
-        if (ignored) {
-            log.debug("Skipping ignored remote file {}", remoteFile.getFullName());
+        if (fileFullPath.equals(rootFullPath)) {
+            // root should not be ignored.
+            return false;
+        } else {
+            if (fileFullPath.startsWith(rootFullPath)) {
+                String relativePath = fileFullPath.substring(rootFullPath.length());
+
+                if (relativePath.startsWith("/")) {
+                    relativePath = relativePath.substring(1);
+                }
+
+                if (remoteFile.isDirectory() && !relativePath.endsWith("/")) {
+                    relativePath += "/";
+                }
+
+                boolean ignored = isIgnored(relativePath);
+
+                if (ignored) {
+                    log.debug("Skipping ignored remote file {}", relativePath);
+                }
+
+                return ignored;
+            } else {
+                // not expecting this, something wrong here
+                log.debug("rootFullPath: {}, fileFullPath: {}", rootFullPath);
+                return false;
+            }
         }
-
-        return ignored;
     }
 
-    protected static boolean isIgnored(File localFile) {
-        boolean ignored = isIgnored(localFile.getName() + (localFile.isDirectory() ? "/" : ""));
+    protected static boolean isIgnored(File rootFile, File localFile) {
+        String relativePath = FileUtil.getRelativePath(rootFile, localFile);
 
-        if (ignored) {
-            log.debug("Skipping ignored local file {}", localFile.getPath());
+        if ("".equals(relativePath)) {
+            // Root file cannot be ignored!
+            return false;
+        } else {
+            boolean ignored = isIgnored(relativePath);
+
+            if (ignored) {
+                log.debug("Skipping ignored local file {}", relativePath);
+            }
+
+            return ignored;
         }
-
-        return ignored;
     }
 
     private static boolean isIgnored(String name) {
-        Set<String> ignoredSet = getCommandLineOpts().getIgnored();
-        return ignoredSet != null && ignoredSet.contains(name);
+        PathPatternMatcherGroup ignoredMatcherGroup = getCommandLineOpts().getIgnoredMatcherGroup();
+
+        return ignoredMatcherGroup != null && ignoredMatcherGroup.match(name);
     }
 
     protected TaskOptions getTaskOptions() {
@@ -103,7 +136,6 @@ public abstract class Task implements Runnable, Comparable<Task> {
             taskBody();
             return;
         } catch (HttpResponseException ex) {
-
             switch (ex.getStatusCode()) {
                 case 401:
                     log.warn("Task {} encountered {}", getId(), ex.getMessage());
@@ -142,7 +174,6 @@ public abstract class Task implements Runnable, Comparable<Task> {
     }
 
     public static class TaskOptions {
-
         private final TaskQueue queue;
         private final OneDriveProvider api;
         private final FileSystemProvider fileSystem;

@@ -35,7 +35,12 @@ cd onedrive-java-client
 
 (1.1) (optional) If you would like, edit src/main/java/resources/app.json, replace the client app id and secret for your own app.
 
-(2) Build the application using [gradle](http://gradle.org/)
+(2) Grab the required project sources with [GitGrabber](https://github.com/TonyTsangHK/GitGrabber.git)
+```
+GitGrabber -c dependency.json
+```
+
+(3) Build the application using [gradle](http://gradle.org/)
 ```
 gradle distZip
 ```
@@ -55,7 +60,7 @@ usage: onedrive-java-syncer
  -M,--max-size <size_in_KB>      only process files smaller than <size> KB
  -n,--dry-run                    only do a dry run without making changes
  -r,--recursive                  recurse into directories
-    --remote <path>              the remote path on OneDrive
+    --remote <path>              the remote path on OneDrive, use :root to reference remote root folder.
  -s,--split-after <size_in_MB>   use multi-part upload for big files
  -t,--threads <count>            number of threads to use
  -v,--version                    print the version information and exit
@@ -84,6 +89,12 @@ By default files are compared by looking at the size, created date and last modi
 
 The ``--dry-run`` option can be used to test the synchronisation operation, this executes the operation without applying any changes.
 
+### Ignore files / exclude file from synchronizing
+
+Create a ignore file then pass it to the program with -i / --ignore option
+
+Ignore file syntax mimic git ignore, reference documentation: [https://git-scm.com/docs/gitignore](https://git-scm.com/docs/gitignore)
+
 ## References
 
 The OneDrive API documentation can be found [here](https://dev.onedrive.com/README.htm)
@@ -101,7 +112,7 @@ The following libraries have been used
 The following key features are currently planned / under development:
 * Full two-way synchronisation support (with use of a local state database)
 * Support for OneDrive for Business
-* Improvements to the ``--ignore`` file
+~~* Improvements to the ``--ignore`` file~~
 
 ## License
 
