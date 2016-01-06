@@ -8,7 +8,7 @@ __This is a forked project from [wooti/onedrive-java-client](https://github.com/
 
 ## Installation
 
-(1) Download and extract the [latest release](https://github.com/TonyTsangHK/onedrive-java-client/releases/download/0.2.2/onedrive-java-client-0.2.2.zip).
+(1) Download and extract the [Latest release](../../releases/latest).
 
 (1.1) (optional) Setup path variable to include the bin folder of extracted files
 
