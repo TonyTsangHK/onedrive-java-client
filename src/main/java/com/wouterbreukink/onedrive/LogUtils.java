@@ -1,7 +1,9 @@
 package com.wouterbreukink.onedrive;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.core.FileAppender;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Layout;
@@ -66,7 +68,12 @@ public class LogUtils {
         encoder.setContext(ctx);
         encoder.start();
 
+        ThresholdFilter thresholdFilter = new ThresholdFilter();
+        thresholdFilter.setLevel(Level.INFO.levelStr);
+
         fileAppender.setEncoder(encoder);
+        fileAppender.setAppend(false);
+        fileAppender.addFilter(thresholdFilter);
         fileAppender.start();
 
         Logger rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
