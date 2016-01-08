@@ -1,6 +1,6 @@
 # onedrive-java-client
 
-A cross-platform command line client for Microsoft OneDrive written in Java 7.
+A cross-platform command line client for Microsoft OneDrive written in Java 8.
 
 __This application is currently in BETA - use with caution__
 

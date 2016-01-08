@@ -38,7 +38,6 @@ public class UpdatePropertiesTask extends Task {
 
     @Override
     protected void taskBody() throws IOException {
-
         switch (getCommandLineOpts().getDirection()) {
             case UP:
                 BasicFileAttributes attr = Files.readAttributes(localFile.toPath(), BasicFileAttributes.class);

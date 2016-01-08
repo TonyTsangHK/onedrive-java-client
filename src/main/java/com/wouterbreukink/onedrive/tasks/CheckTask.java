@@ -99,13 +99,13 @@ public class CheckTask extends Task {
         }
 
         if (localFile.isFile() && !remoteFile.isDirectory()) { // If we are syncing files
-
             // Check if the remote file matches the local file
             FileSystemProvider.FileMatch match = fileSystem.verifyMatch(
                     localFile, remoteFile.getHashes(),
                     remoteFile.getSize(),
                     remoteFile.getCreatedDateTime(),
-                    remoteFile.getLastModifiedDateTime());
+                    remoteFile.getLastModifiedDateTime()
+            );
 
             switch (match) {
                 case NO:
@@ -127,7 +127,6 @@ public class CheckTask extends Task {
                     reporter.same();
                     break;
             }
-
         } else { // Resolve cases where remote and local disagree over whether the item is a file or folder
             switch (getCommandLineOpts().getDirection()) {
                 case UP:
