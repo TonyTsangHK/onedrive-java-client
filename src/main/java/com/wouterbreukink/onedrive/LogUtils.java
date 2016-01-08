@@ -70,10 +70,11 @@ public class LogUtils {
 
         ThresholdFilter thresholdFilter = new ThresholdFilter();
         thresholdFilter.setLevel(Level.INFO.levelStr);
+        thresholdFilter.start();
 
+        fileAppender.addFilter(thresholdFilter);
         fileAppender.setEncoder(encoder);
         fileAppender.setAppend(false);
-        fileAppender.addFilter(thresholdFilter);
         fileAppender.start();
 
         Logger rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
