@@ -13,7 +13,6 @@ import utils.file.path.PathPatternMatcherGroup;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.wouterbreukink.onedrive.CommandLineOpts.getCommandLineOpts;
@@ -138,25 +137,31 @@ public abstract class Task implements Runnable, Comparable<Task> {
         } catch (HttpResponseException ex) {
             switch (ex.getStatusCode()) {
                 case 401:
-                    log.warn("Task {} encountered {}", getId(), ex.getMessage());
+                    log.warn("Task {}: [{}] encountered {}", getId(), this.toString(), ex.getMessage(), this.toString());
                     break;
                 case 500:
                 case 502:
                 case 503:
                 case 504:
-                    log.warn("Task {} encountered {} - sleeping 10 seconds", getId(), ex.getMessage());
+                    log.warn(
+                        "Task {}: [{}] encountered {} - sleeping 10 seconds",
+                        getId(), this.toString(), ex.getMessage()
+                    );
                     queue.suspend(10);
                     break;
                 case 429:
                 case 509:
-                    log.warn("Task {} encountered {} - sleeping 60 seconds", getId(), ex.getMessage());
+                    log.warn(
+                        "Task {}: [{}] encountered {} - sleeping 60 seconds",
+                        getId(), this.toString(), ex.getMessage()
+                    );
                     queue.suspend(60);
                     break;
                 default:
-                    log.warn("Task {} encountered {}", getId(), ex.getMessage());
+                    log.warn("Task {}: [{}] encountered {}", getId(), this.toString(), ex.getMessage());
             }
         } catch (Exception ex) {
-            log.error("Task {} encountered exception", getId(), ex);
+            log.error("Task {}: [{}] encountered exception", getId(), this.toString(), ex);
             queue.suspend(1);
         }
 
