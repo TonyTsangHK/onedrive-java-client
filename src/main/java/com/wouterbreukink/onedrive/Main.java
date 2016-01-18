@@ -142,10 +142,28 @@ public class Main {
         );
 
         // Check the given root folder
-        OneDriveItem rootFolder = api.getPath(getCommandLineOpts().getRemotePath());
+        OneDriveItem rootFolder;
+        try {
+            rootFolder = api.getPath(getCommandLineOpts().getRemotePath());
+        } catch (OneDriveAPIException e) {
+            if (e.getCode() == 404) {
+                log.error("Specified remote folder '{}' does not exist", getCommandLineOpts().getRemotePath());
+            } else {
+                log.error("Unable to locate remote folder '{}' - {}", getCommandLineOpts().getRemotePath(), e.getMessage());
+            }
+            return;
+        }
 
-        if (!rootFolder.isDirectory()) {
-            log.error("Specified root '{}' is not a folder", rootFolder.getFullName());
+        if (rootFolder == null || !rootFolder.isDirectory()) {
+            log.error("Specified root '{}' is not a folder", getCommandLineOpts().getRemotePath());
+            return;
+        }
+
+        // Check the target folder
+        File localFolder = new File(getCommandLineOpts().getLocalPath());
+
+        if (!localFolder.exists() || !localFolder.isDirectory()) {
+            log.error("Specified local path '{}' is not a valid folder", getCommandLineOpts().getLocalPath());
             return;
         }
 

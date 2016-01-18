@@ -5,6 +5,9 @@ import com.wouterbreukink.onedrive.client.OneDriveItem;
 import utils.hash.HashUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.wouterbreukink.onedrive.client.downloader.ResumableDownloader;
+import com.wouterbreukink.onedrive.client.downloader.ResumableDownloaderProgressListener;
+import utils.string.FormatUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,6 +58,7 @@ public class DownloadTask extends Task {
 
         if (remoteFile.isDirectory()) {
             File newParent = fileSystem.createFolder(parent, remoteFile.getName());
+            queue.add(new UpdatePropertiesTask(getTaskOptions(), remoteFile, newParent));
 
             for (OneDriveItem item : api.getChildren(remoteFile)) {
                 queue.add(new DownloadTask(getTaskOptions(), newParent, remoteRoot, item, false));
@@ -65,7 +69,7 @@ public class DownloadTask extends Task {
                 return;
             }
 
-            long startTime = System.currentTimeMillis();
+            final long startTime = System.currentTimeMillis();
 
             File downloadFile = null;
 
@@ -89,17 +93,43 @@ public class DownloadTask extends Task {
                     );
                     downloadFile = fileSystem.createFile(parent, remoteFile.getName() + ".tmp");
 
-                    api.download(remoteFile, downloadFile);
+                    // The progress reporter
+                    ResumableDownloaderProgressListener progressListener = new ResumableDownloaderProgressListener() {
 
-                    long elapsedTime = System.currentTimeMillis() - startTime;
+                        private long startTimeInner = System.currentTimeMillis();
 
-                    log.info("Downloaded {} in {} ({}/s) to {} file {}",
-                        readableFileSize(remoteFile.getSize()),
-                        readableTime(elapsedTime),
-                        elapsedTime > 0 ? readableFileSize(remoteFile.getSize() / (elapsedTime / 1000d)) : 0,
-                        replace ? "replace" : "new",
-                        remoteFile.getFullName()
-                    );
+                        @Override
+                        public void progressChanged(ResumableDownloader downloader) throws IOException {
+
+                            switch (downloader.getDownloadState()) {
+                                case MEDIA_IN_PROGRESS:
+                                    long elapsedTimeInner = System.currentTimeMillis() - startTimeInner;
+
+                                    log.info(
+                                        "Downloaded chunk (progress {}%) of {} ({}/s) for file {}",
+                                        FormatUtils.formatNumber(downloader.getProgress() * 100),
+                                        readableFileSize(downloader.getChunkSize()),
+                                        elapsedTimeInner > 0 ? readableFileSize(downloader.getChunkSize() / (elapsedTimeInner / 1000d)) : 0,
+                                        remoteFile.getFullName()
+                                    );
+
+                                    startTimeInner = System.currentTimeMillis();
+                                    break;
+                                case MEDIA_COMPLETE:
+                                    long elapsedTime = System.currentTimeMillis() - startTime;
+                                    log.info(
+                                        "Downloaded {} in {} ({}/s) of {} file {}",
+                                        readableFileSize(remoteFile.getSize()),
+                                        readableTime(elapsedTime),
+                                        elapsedTime > 0 ? readableFileSize(remoteFile.getSize() / (elapsedTime / 1000d)) : 0,
+                                        replace ? "replaced" : "new",
+                                        remoteFile.getFullName()
+                                    );
+                            }
+                        }
+                    };
+
+                    api.download(remoteFile, downloadFile, progressListener);
 
                     // Do a CRC check on the downloaded file if available, otherwise check the sha1sum
                     if (remoteFile.getHashes().hasCrc32Hash()) {

@@ -137,7 +137,7 @@ public abstract class Task implements Runnable, Comparable<Task> {
         } catch (HttpResponseException ex) {
             switch (ex.getStatusCode()) {
                 case 401:
-                    log.warn("Task {}: [{}] encountered {}", getId(), this.toString(), ex.getMessage(), this.toString());
+                    log.warn("Task {}: [{}] encountered {}", getId(), this.toString(), ex.getMessage());
                     break;
                 case 500:
                 case 502:

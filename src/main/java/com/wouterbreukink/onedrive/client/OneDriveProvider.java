@@ -1,6 +1,7 @@
 package com.wouterbreukink.onedrive.client;
 
 import com.wouterbreukink.onedrive.client.authoriser.AuthorisationProvider;
+import com.wouterbreukink.onedrive.client.downloader.ResumableDownloaderProgressListener;
 import com.wouterbreukink.onedrive.client.resources.Drive;
 
 import java.io.File;
@@ -30,9 +31,9 @@ public interface OneDriveProvider {
 
     OneDriveItem updateFile(OneDriveItem item, Date createdDate, Date modifiedDate) throws IOException;
 
-    OneDriveItem createFolder(OneDriveItem parent, String name) throws IOException;
+    OneDriveItem createFolder(OneDriveItem parent, File target) throws IOException;
 
-    void download(OneDriveItem item, File target) throws IOException;
+    void download(OneDriveItem item, File target, ResumableDownloaderProgressListener progressListener) throws IOException;
 
     void delete(OneDriveItem remoteFile) throws IOException;
 
