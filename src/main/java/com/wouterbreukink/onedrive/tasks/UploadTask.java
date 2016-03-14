@@ -85,7 +85,7 @@ public class UploadTask extends Task {
 
                         long elapsedTimeInner = System.currentTimeMillis() - startTimeInner;
 
-                        log.info(
+                        log.trace(
                             "Uploaded chunk (progress {}) of {} ({}/s) for file {}",
                             FormatUtils.formatNumber(((double) session.getTotalUploaded() / session.getFile().length()) * 100, 1),
                             readableFileSize(session.getLastUploaded()),
