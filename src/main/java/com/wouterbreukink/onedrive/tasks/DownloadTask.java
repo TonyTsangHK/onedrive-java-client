@@ -105,7 +105,7 @@ public class DownloadTask extends Task {
                                 case MEDIA_IN_PROGRESS:
                                     long elapsedTimeInner = System.currentTimeMillis() - startTimeInner;
 
-                                    log.info(
+                                    log.trace(
                                         "Downloaded chunk (progress {}%) of {} ({}/s) for file {}",
                                         FormatUtils.formatNumber(downloader.getProgress() * 100),
                                         readableFileSize(downloader.getChunkSize()),
