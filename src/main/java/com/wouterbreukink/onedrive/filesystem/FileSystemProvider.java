@@ -15,7 +15,7 @@ public interface FileSystemProvider {
 
     void replaceFile(File original, File replacement) throws IOException;
 
-    void setAttributes(File downloadFile, Date created, Date lastModified) throws IOException;
+    boolean setAttributes(File downloadFile, Date created, Date lastModified) throws IOException;
 
     boolean verifyCrc(File file, long crc) throws IOException;
 

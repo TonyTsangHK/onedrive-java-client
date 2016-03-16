@@ -38,6 +38,7 @@ public class UpdatePropertiesTask extends Task {
 
     @Override
     protected void taskBody() throws IOException {
+        boolean updated = false;
         switch (getCommandLineOpts().getDirection()) {
             case UP:
                 BasicFileAttributes attr = Files.readAttributes(localFile.toPath(), BasicFileAttributes.class);
@@ -45,20 +46,38 @@ public class UpdatePropertiesTask extends Task {
                 Date localCreatedDate = new Date(attr.creationTime().to(TimeUnit.SECONDS) * 1000);
                 Date localModifiedDate = new Date(attr.lastModifiedTime().to(TimeUnit.SECONDS) * 1000);
 
-                api.updateFile(remoteFile, localCreatedDate, localModifiedDate);
+                Date remoteCreatedDate = remoteFile.getCreatedDateTime(),
+                    remoteModifiedDate = remoteFile.getLastModifiedDateTime();
 
-                log.info("Updated remote timestamps for item {}", remoteFile.getFullName());
+                if (
+                    localCreatedDate.getTime() != remoteCreatedDate.getTime() ||
+                    localModifiedDate.getTime() != remoteModifiedDate.getTime()
+                ) {
+                    api.updateFile(remoteFile, localCreatedDate, localModifiedDate);
+
+                    updated = true;
+
+                    log.info("Updated remote timestamps for item {}", remoteFile.getFullName());
+                }
 
                 break;
             case DOWN:
-                fileSystem.setAttributes(localFile, remoteFile.getCreatedDateTime(), remoteFile.getLastModifiedDateTime());
-                log.info("Updated local timestamps for item {}", remoteFile.getFullName());
+                if (
+                    fileSystem.setAttributes(
+                        localFile, remoteFile.getCreatedDateTime(), remoteFile.getLastModifiedDateTime()
+                    )
+                ) {
+                    updated = true;
+                    log.info("Updated local timestamps for item {}", remoteFile.getFullName());
+                }
                 break;
             default:
                 throw new IllegalStateException("Unsupported direction " + getCommandLineOpts().getDirection());
         }
 
-        reporter.propertiesUpdated();
+        if (updated) {
+            reporter.propertiesUpdated();
+        }
     }
 }
 

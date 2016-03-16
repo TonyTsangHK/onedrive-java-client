@@ -1,5 +1,6 @@
 package com.wouterbreukink.onedrive.filesystem;
 
+import javax.naming.directory.BasicAttributes;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -76,11 +77,23 @@ class RWFileSystemProvider extends ROFileSystemProvider implements FileSystemPro
     }
 
     @Override
-    public void setAttributes(File downloadFile, Date created, Date lastModified) throws IOException {
-        BasicFileAttributeView attributes = Files.getFileAttributeView(downloadFile.toPath(), BasicFileAttributeView.class);
-        FileTime createdFt = FileTime.fromMillis(created.getTime());
-        FileTime lastModifiedFt = FileTime.fromMillis(lastModified.getTime());
-        attributes.setTimes(lastModifiedFt, lastModifiedFt, createdFt);
+    public boolean setAttributes(File downloadFile, Date created, Date lastModified) throws IOException {
+        BasicFileAttributeView attributeView = Files.getFileAttributeView(downloadFile.toPath(), BasicFileAttributeView.class);
+
+        BasicFileAttributes attributes = attributeView.readAttributes();
+
+        FileTime currentCreationTime = attributes.creationTime(),
+            currentModifiedTime = attributes.lastModifiedTime(),
+            createdTime = FileTime.fromMillis(created.getTime()),
+            lastModifiedTime = FileTime.fromMillis(lastModified.getTime());
+
+        if (currentCreationTime.compareTo(createdTime) != 0 && currentModifiedTime.compareTo(lastModifiedTime) != 0) {
+            attributeView.setTimes(lastModifiedTime, lastModifiedTime, createdTime);
+            return true;
+        } else {
+            // nothing changed
+            return false;
+        }
     }
 
     @Override

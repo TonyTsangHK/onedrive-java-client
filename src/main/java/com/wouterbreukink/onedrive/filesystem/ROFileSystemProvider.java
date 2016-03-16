@@ -38,8 +38,9 @@ class ROFileSystemProvider implements FileSystemProvider {
         // Do nothing
     }
 
-    public void setAttributes(File downloadFile, Date created, Date lastModified) throws IOException {
-        // Do nothing
+    public boolean setAttributes(File downloadFile, Date created, Date lastModified) throws IOException {
+        // Do nothing, return false instead
+        return false;
     }
 
     public boolean verifyCrc(File file, long crc) throws IOException {
