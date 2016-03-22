@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-class ROOneDriveProvider implements OneDriveProvider {
+class ROOneDriveProvider extends AbstractOneDriveProvider {
     static final HttpTransport HTTP_TRANSPORT = new ApacheHttpTransport();
     static final JsonFactory JSON_FACTORY = new GsonFactory();
 
@@ -29,8 +29,8 @@ class ROOneDriveProvider implements OneDriveProvider {
                 HTTP_TRANSPORT.createRequestFactory(
                     request -> {
                         request.setParser(new JsonObjectParser(JSON_FACTORY));
-                        request.setReadTimeout(60000);
-                        request.setConnectTimeout(60000);
+                        request.setReadTimeout(READ_TIME_OUT);
+                        request.setConnectTimeout(CONNECTION_TIME_OUT);
                         try {
                             request.getHeaders().setAuthorization("bearer " + authoriser.getAccessToken());
                         } catch (IOException e) {
@@ -44,12 +44,12 @@ class ROOneDriveProvider implements OneDriveProvider {
 
     public Drive getDefaultDrive() throws IOException {
         HttpRequest request = requestFactory.buildGetRequest(OneDriveUrl.defaultDrive());
-        return request.execute().parseAs(Drive.class);
+        return executeAndParseRequest(request, Drive.class);
     }
 
     public OneDriveItem getRoot() throws IOException {
         HttpRequest request = requestFactory.buildGetRequest(OneDriveUrl.driveRoot());
-        Item response = request.execute().parseAs(Item.class);
+        Item response = executeAndParseRequest(request, Item.class);
         return OneDriveItem.FACTORY.create(response);
     }
 
@@ -70,7 +70,7 @@ class ROOneDriveProvider implements OneDriveProvider {
             }
 
             HttpRequest request = requestFactory.buildGetRequest(url);
-            ItemSet items = request.execute().parseAs(ItemSet.class);
+            ItemSet items = executeAndParseRequest(request, ItemSet.class);
 
             for (Item i : items.getValue()) {
                 itemsToReturn.add(OneDriveItem.FACTORY.create(i));
@@ -85,7 +85,7 @@ class ROOneDriveProvider implements OneDriveProvider {
     public OneDriveItem getPath(String path) throws IOException {
         try {
             HttpRequest request = requestFactory.buildGetRequest(OneDriveUrl.getPath(path));
-            Item response = request.execute().parseAs(Item.class);
+            Item response = executeAndParseRequest(request, Item.class);
             return OneDriveItem.FACTORY.create(response);
         } catch (HttpResponseException e) {
             throw new OneDriveAPIException(e.getStatusCode(), "Unable to get path", e);

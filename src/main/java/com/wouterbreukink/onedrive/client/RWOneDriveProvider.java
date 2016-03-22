@@ -22,7 +22,7 @@ import java.util.Date;
 
 import static com.wouterbreukink.onedrive.CommandLineOpts.getCommandLineOpts;
 
-class RWOneDriveProvider extends ROOneDriveProvider implements OneDriveProvider {
+class RWOneDriveProvider extends ROOneDriveProvider {
     public RWOneDriveProvider(AuthorisationProvider authoriser) {
         super(authoriser);
     }
@@ -36,7 +36,7 @@ class RWOneDriveProvider extends ROOneDriveProvider implements OneDriveProvider 
                 OneDriveUrl.putContent(parent.getId(), file.getName()),
                 new FileContent(null, file));
 
-        Item response = request.execute().parseAs(Item.class);
+        Item response = executeAndParseRequest(request, Item.class);
         OneDriveItem item = OneDriveItem.FACTORY.create(response);
 
         // Now update the item
@@ -78,7 +78,7 @@ class RWOneDriveProvider extends ROOneDriveProvider implements OneDriveProvider 
 
         request.setLoggingEnabled(true);
 
-        return OneDriveItem.FACTORY.create(request.execute().parseAs(Item.class));
+        return OneDriveItem.FACTORY.create(executeAndParseRequest(request, Item.class));
     }
 
     @Override
@@ -89,7 +89,7 @@ class RWOneDriveProvider extends ROOneDriveProvider implements OneDriveProvider 
                 new JsonHttpContent(JSON_FACTORY, new UploadSessionFacet(file.getName()))
         );
 
-        UploadSession session = request.execute().parseAs(UploadSession.class);
+        UploadSession session = executeAndParseRequest(request, UploadSession.class);
 
         return new OneDriveUploadSession(parent, file, session.getUploadUrl(), session.getNextExpectedRanges());
     }
@@ -112,11 +112,11 @@ class RWOneDriveProvider extends ROOneDriveProvider implements OneDriveProvider 
         );
 
         if (session.getTotalUploaded() + bytesToUpload.length < session.getFile().length()) {
-            UploadSession response = request.execute().parseAs(UploadSession.class);
-            session.setRanges(response.getNextExpectedRanges());
+            UploadSession uploadsSession = executeAndParseRequest(request, UploadSession.class);
+            session.setRanges(uploadsSession.getNextExpectedRanges());
             return;
         } else {
-            item = OneDriveItem.FACTORY.create(request.execute().parseAs(Item.class));
+            item = OneDriveItem.FACTORY.create(executeAndParseRequest(request, Item.class));
         }
 
         // If this is the final chunk then set the properties
@@ -138,7 +138,7 @@ class RWOneDriveProvider extends ROOneDriveProvider implements OneDriveProvider 
                 OneDriveUrl.item(item.getId()),
                 new JsonHttpContent(JSON_FACTORY, updateItem));
 
-        Item response = request.execute().parseAs(Item.class);
+        Item response = executeAndParseRequest(request, Item.class);
         return OneDriveItem.FACTORY.create(response);
     }
 
@@ -149,7 +149,8 @@ class RWOneDriveProvider extends ROOneDriveProvider implements OneDriveProvider 
                 OneDriveUrl.children(parent.getId()),
                 new JsonHttpContent(JSON_FACTORY, newFolder));
 
-        Item response = request.execute().parseAs(Item.class);
+        Item response = executeAndParseRequest(request, Item.class);
+
         OneDriveItem item = OneDriveItem.FACTORY.create(response);
 
         // Set the remote timestamps

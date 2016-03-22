@@ -167,10 +167,14 @@ class OneDriveAuthorisationProvider implements AuthorisationProvider {
     private void processResponse(HttpResponse response) throws IOException {
         authorisation = response.parseAs(Authorisation.class);
 
+        int statusCode = response.getStatusCode();
+
+        response.disconnect();
+
         // Check for failures
-        if (response.getStatusCode() != 200 || authorisation.getError() != null) {
+        if (statusCode != 200 || authorisation.getError() != null) {
             throw new OneDriveAPIException(
-                response.getStatusCode(),
+                statusCode,
                 String.format(
                     "Error code %d - %s (%s)",
                     response.getStatusCode(),

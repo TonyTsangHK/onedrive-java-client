@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.util.Date;
 
 public interface OneDriveProvider {
+    // 1 minute timeout
+    int CONNECTION_TIME_OUT = 60000, READ_TIME_OUT = 60000;
+
     // Read only operations
 
     Drive getDefaultDrive() throws IOException;

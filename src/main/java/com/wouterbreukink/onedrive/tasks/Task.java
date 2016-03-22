@@ -13,6 +13,7 @@ import utils.file.path.PathPatternMatcherGroup;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.wouterbreukink.onedrive.CommandLineOpts.getCommandLineOpts;
@@ -160,6 +161,12 @@ public abstract class Task implements Runnable, Comparable<Task> {
                 default:
                     log.warn("Task {}: [{}] encountered {}", getId(), this.toString(), ex.getMessage());
             }
+        } catch (SocketException ex) {
+            log.warn(
+                "Task {}: [{}] encountered socket exception: {} - sleeping for 1 second.", getId(),
+                this.toString(), ex.getMessage()
+            );
+            queue.suspend(1);
         } catch (Exception ex) {
             log.error("Task {}: [{}] encountered exception", getId(), this.toString(), ex);
             queue.suspend(1);
