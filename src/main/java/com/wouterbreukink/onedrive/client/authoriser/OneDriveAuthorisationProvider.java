@@ -1,14 +1,10 @@
 package com.wouterbreukink.onedrive.client.authoriser;
 
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.*;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.client.util.Key;
 import com.google.api.client.util.Preconditions;
 import com.wouterbreukink.onedrive.Main;
 import com.wouterbreukink.onedrive.client.OneDriveAPIException;
@@ -90,9 +86,13 @@ class OneDriveAuthorisationProvider implements AuthorisationProvider {
                     oauthRedirectUrl
                 );
 
-        log.info("To authorise this application ou must generate an authorisation token");
-        log.info("Open the following in a browser, sign on, wait until you are redirected to a blank page and then store the url in the address bar in your key file.");
-        log.info("Authorisation URL: {}", authString);
+        log.info(
+            "Authorisation instructions:\n" +
+            "To authorise this application you must generate an authorisation token\n" +
+            "Open the following in a browser, sign on, wait until you are redirected to a blank page and then store the url in the address bar in your key file.\n" +
+            "Authorisation URL: {}", 
+            authString
+        );
     }
 
     @Override
@@ -117,22 +117,17 @@ class OneDriveAuthorisationProvider implements AuthorisationProvider {
     }
 
     private void getTokenFromCode(final String code) throws IOException {
-
         log.debug("Fetching authorisation token using authorisation code");
+        
         HttpRequest request =
-                HTTP_TRANSPORT.createRequestFactory().buildGetRequest(
-                    new GenericUrl(oauthRedeemUrl) {
-                        @Key("client_id")
-                        private String id = clientId;
-                        @Key("client_secret")
-                        private String secret = clientSecret;
-                        @Key("code")
-                        private String authCode = code;
-                        @Key("grant_type")
-                        private String grantType = "authorization_code";
-                        @Key("redirect_uri")
-                        private String redirect = oauthRedirectUrl;
-                    }
+                HTTP_TRANSPORT.createRequestFactory().buildPostRequest(
+                    new GenericUrl(oauthRedeemUrl), 
+                    new UrlEncodedContent(
+                        DataManipulator.createMap(
+                            Arrays.asList("client_id", "code", "grant_type", "redirect_uri"),
+                            Arrays.asList(clientId, code, "authorization_code", oauthRedirectUrl)
+                        )
+                    )
                 );
 
         request.setParser(new JsonObjectParser(JSON_FACTORY));
@@ -144,19 +139,14 @@ class OneDriveAuthorisationProvider implements AuthorisationProvider {
         log.debug("Fetching authorisation token using refresh token");
 
         HttpRequest request =
-                HTTP_TRANSPORT.createRequestFactory().buildGetRequest(
-                    new GenericUrl(oauthRedeemUrl) {
-                        @Key("client_id")
-                        private String id = clientId;
-                        @Key("client_secret")
-                        private String secret = clientSecret;
-                        @Key("refresh_token")
-                        private String token = refreshToken;
-                        @Key("grant_type")
-                        private String grantType = "refresh_token";
-                        @Key("redirect_uri")
-                        private String redirect = oauthRedirectUrl;
-                    }
+                HTTP_TRANSPORT.createRequestFactory().buildPostRequest(
+                    new GenericUrl(oauthRedeemUrl), 
+                    new UrlEncodedContent(
+                        DataManipulator.createMap(
+                            Arrays.asList("client_id", "refresh_token", "grant_type", "redirect_uri"),
+                            Arrays.asList(clientId, refreshToken, "refresh_token", oauthRedirectUrl)
+                        )
+                    )
                 );
 
         request.setParser(new JsonObjectParser(JSON_FACTORY));
