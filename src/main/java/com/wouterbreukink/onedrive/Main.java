@@ -50,19 +50,7 @@ public class Main {
     // Program version, lazy loading
     private static String version = null;
 
-    private static final ImmutableMap<String, Object> APP_CONFIG_MAP;
-
-    static {
-        Map<String, Object> map = JsonParser.getInstance().parseMap(
-            FileUtil.getFileContent(Main.class.getResourceAsStream("/app.json"))
-        );
-
-        if (map != null) {
-            APP_CONFIG_MAP = new ImmutableMap<>(map);
-        } else {
-            APP_CONFIG_MAP = new ImmutableMap<>();
-        }
-    }
+    private static ImmutableMap<String, Object> APP_CONFIG_MAP = null;
 
     public static void main(String[] args) throws Exception {
         // Parse command line args
@@ -72,6 +60,18 @@ public class Main {
             log.error("Unable to parse command line arguments - {}", ex.getMessage());
             CommandLineOpts.printHelp();
             return;
+        }
+
+        // Initialize app configs
+        File appFile = getCommandLineOpts().getAppFile().toFile();
+
+
+        Map<String, Object> map = JsonParser.getInstance().parseMap(FileUtil.getFileContent(appFile));
+
+        if (map != null) {
+            APP_CONFIG_MAP = new ImmutableMap<>(map);
+        } else {
+            APP_CONFIG_MAP = new ImmutableMap<>();
         }
 
         if (getCommandLineOpts().help()) {
@@ -102,7 +102,7 @@ public class Main {
             CommandLineOpts.printHelp();
             return;
         }
-
+        
         // Initialise the OneDrive authorisation
         AuthorisationProvider authoriser;
         try {

@@ -33,6 +33,7 @@ public class CommandLineOpts {
     private boolean recursive = false;
     private int maxSizeKb = 0;
     private Path keyFile = Paths.get("onedrive.key");
+    private Path appFile = Paths.get("app.json");
     private boolean dryRun = false;
     private String logFile = null;
     private int splitAfter = 5;
@@ -93,6 +94,10 @@ public class CommandLineOpts {
 
         if (line.hasOption("keyfile")) {
             opts.keyFile = Paths.get(line.getOptionValue("keyfile"));
+        }
+        
+        if (line.hasOption("appfile")) {
+            opts.appFile = Paths.get(line.getOptionValue("keyfile"));
         }
 
         if (line.hasOption("logfile")) {
@@ -160,6 +165,13 @@ public class CommandLineOpts {
                 .hasArg()
                 .argName("file")
                 .desc("key file to use")
+                .build();
+        
+        Option appFile = Option.builder("f")
+                .longOpt("appfile")
+                .hasArg()
+                .argName("file")
+                .desc("app config file")
                 .build();
 
         Option logLevel = Option.builder("L")
@@ -240,6 +252,7 @@ public class CommandLineOpts {
                 .addOption(help)
                 .addOption(ignore)
                 .addOption(keyFile)
+                .addOption(appFile)
                 .addOption(logLevel)
                 .addOption(localPath)
                 .addOption(logFile)
@@ -300,6 +313,10 @@ public class CommandLineOpts {
 
     public Path getKeyFile() {
         return keyFile;
+    }
+    
+    public Path getAppFile() {
+        return appFile;
     }
 
     public boolean isDryRun() {

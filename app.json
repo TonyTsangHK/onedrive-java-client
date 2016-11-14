@@ -1,6 +1,6 @@
 {
-    "id": "000000004015B68A",
-    "secret": "to8fZAGMvD7Jr-NSdY1eVm4V7eaAtV5B",
+    "id": "[your app id]",
+    "secret": "[your app secret]",
     "apiUrl": "https://api.onedrive.com/",
     "apiVersion": "v1.0",
     "oauthRedirectUrl": "https://login.live.com/oauth20_desktop.srf",

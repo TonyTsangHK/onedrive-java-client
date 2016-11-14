@@ -30,6 +30,10 @@ distZip {
         from 'customScripts'
         include "*"
     }
+    into("${baseDir}/${rootProject.name}-${version}") {
+        from '.'
+        include "app.json"
+    }
 }
 
 jar {

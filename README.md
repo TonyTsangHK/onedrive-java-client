@@ -54,6 +54,15 @@ git clone https://github.com/TonyTsangHK/JsonUtils.git
 gradle distZip
 ```
 
+## App preparation
+Follow the instructions to register an app: [Onedrive app registration](https://dev.onedrive.com/app-registration.htm)
+Addition steps for app registration:
+- Add web platform
+- Use https://login.live.com/oauth20_desktop.srf as redirect url 
+
+After app registration, edit app.json
+Replace id & secret with your app id and secrets 
+
 ## Usage
 ```bash
 usage: onedrive-java-syncer
@@ -63,6 +72,7 @@ usage: onedrive-java-syncer
  -h,--help                       print this message
  -i,--ignore <ignore_file>       ignore entry file
  -k,--keyfile <file>             key file to use
+ -f,--appfile <file>             app config file (app id & app secret)
  -L,--log-level <level (1-7)>    controls the verbosity of logging
     --local <path>               the local path
     --logfile <file>             log to file
