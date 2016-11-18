@@ -32,7 +32,7 @@ class OneDriveUrl extends GenericUrl {
     public static OneDriveUrl driveRoot() {
         return new OneDriveUrl(rootUrl + "/drive/root");
     }
-
+    
     public static OneDriveUrl children(String id) {
         return new OneDriveUrl(rootUrl + "/drive/items/" + id + "/children");
     }
@@ -47,6 +47,10 @@ class OneDriveUrl extends GenericUrl {
 
     public static OneDriveUrl createUploadSession(String id, String name) {
         return new OneDriveUrl(rootUrl + "/drive/items/" + id + ":/" + encode(name) + ":/upload.createSession");
+    }
+
+    public static OneDriveUrl delta(String id) {
+        return new OneDriveUrl(rootUrl + "/drive/items/" + id + "/view.delta");
     }
 
     public static OneDriveUrl getPath(String path) {

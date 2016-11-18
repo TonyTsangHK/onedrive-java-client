@@ -33,8 +33,9 @@ class RWOneDriveProvider extends ROOneDriveProvider {
         }
 
         HttpRequest request = requestFactory.buildPutRequest(
-                OneDriveUrl.putContent(parent.getId(), file.getName()),
-                new FileContent(null, file));
+            OneDriveUrl.putContent(parent.getId(), file.getName()),
+            new FileContent(null, file)
+        );
 
         Item response = executeAndParseRequest(request, Item.class);
         OneDriveItem item = OneDriveItem.FACTORY.create(response);
@@ -85,8 +86,8 @@ class RWOneDriveProvider extends ROOneDriveProvider {
     public OneDriveUploadSession startUploadSession(OneDriveItem parent, File file) throws IOException {
 
         HttpRequest request = requestFactory.buildPostRequest(
-                OneDriveUrl.createUploadSession(parent.getId(), file.getName()),
-                new JsonHttpContent(JSON_FACTORY, new UploadSessionFacet(file.getName()))
+            OneDriveUrl.createUploadSession(parent.getId(), file.getName()),
+            new JsonHttpContent(JSON_FACTORY, new UploadSessionFacet(file.getName()))
         );
 
         UploadSession session = executeAndParseRequest(request, UploadSession.class);
@@ -135,8 +136,9 @@ class RWOneDriveProvider extends ROOneDriveProvider {
         WriteItemFacet updateItem = new WriteItemFacet(item.getName(), fileSystem, false, item.isDirectory());
 
         HttpRequest request = requestFactory.buildPatchRequest(
-                OneDriveUrl.item(item.getId()),
-                new JsonHttpContent(JSON_FACTORY, updateItem));
+            OneDriveUrl.item(item.getId()),
+            new JsonHttpContent(JSON_FACTORY, updateItem)
+        );
 
         Item response = executeAndParseRequest(request, Item.class);
         return OneDriveItem.FACTORY.create(response);
@@ -146,8 +148,9 @@ class RWOneDriveProvider extends ROOneDriveProvider {
         WriteFolderFacet newFolder = new WriteFolderFacet(target.getName());
 
         HttpRequest request = requestFactory.buildPostRequest(
-                OneDriveUrl.children(parent.getId()),
-                new JsonHttpContent(JSON_FACTORY, newFolder));
+            OneDriveUrl.children(parent.getId()), 
+            new JsonHttpContent(JSON_FACTORY, newFolder)
+        );
 
         Item response = executeAndParseRequest(request, Item.class);
 
@@ -168,7 +171,7 @@ class RWOneDriveProvider extends ROOneDriveProvider {
             ResumableDownloader downloader = new ResumableDownloader(HTTP_TRANSPORT, requestFactory.getInitializer());
             downloader.setProgressListener(progressListener);
             downloader.setChunkSize(getCommandLineOpts().getSplitAfter() * 1024 * 1024);
-
+            
             downloader.download(OneDriveUrl.content(item.getId()), fos);
         } catch (IOException e) {
             throw new OneDriveAPIException(0, "Unable to download file", e);

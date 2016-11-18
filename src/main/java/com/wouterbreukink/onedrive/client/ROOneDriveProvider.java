@@ -12,6 +12,8 @@ import com.wouterbreukink.onedrive.client.downloader.ResumableDownloaderProgress
 import com.wouterbreukink.onedrive.client.resources.Drive;
 import com.wouterbreukink.onedrive.client.resources.Item;
 import com.wouterbreukink.onedrive.client.resources.ItemSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 class ROOneDriveProvider extends AbstractOneDriveProvider {
+    private static final Logger log = LoggerFactory.getLogger(ROOneDriveProvider.class);
     static final HttpTransport HTTP_TRANSPORT = new ApacheHttpTransport();
     static final JsonFactory JSON_FACTORY = new GsonFactory();
 
@@ -51,6 +54,40 @@ class ROOneDriveProvider extends AbstractOneDriveProvider {
         HttpRequest request = requestFactory.buildGetRequest(OneDriveUrl.driveRoot());
         Item response = executeAndParseRequest(request, Item.class);
         return OneDriveItem.FACTORY.create(response);
+    }
+    
+    @Override
+    public OneDriveItem[] getFolderDelta(OneDriveItem parent, String nextToken) throws IOException {
+        if (!parent.isDirectory()) {
+            throw new IllegalArgumentException("Specified Item is not a folder");
+        }
+
+        List<OneDriveItem> itemsToReturn = Lists.newArrayList();
+
+        String token = nextToken;
+
+        do {
+            log.info("Token: {}", token);
+            
+            OneDriveUrl url = OneDriveUrl.delta(parent.getId());
+
+            if (token != null) {
+                url.setToken(token);
+            }
+
+            HttpRequest request = requestFactory.buildGetRequest(url);
+
+            HttpResponse resp = request.execute();
+            ItemSet items = executeAndParseRequest(request, ItemSet.class);
+
+            for (Item i : items.getValue()) {
+                itemsToReturn.add(OneDriveItem.FACTORY.create(i));
+            }
+            
+            token = items.getNextToken();
+        } while (token != null); // If we have a token for the next page we need to keep going
+
+        return itemsToReturn.toArray(new OneDriveItem[itemsToReturn.size()]);
     }
 
     public OneDriveItem[] getChildren(OneDriveItem parent) throws IOException {

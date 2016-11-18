@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class DeleteTask extends Task {
+    public static final int PRIORITY = 100;
+    
     private static final Logger log = LoggerFactory.getLogger(DeleteTask.class.getName());
     private final OneDriveItem remoteFile;
     private final File localFile;
@@ -29,7 +31,7 @@ public class DeleteTask extends Task {
     }
 
     public int priority() {
-        return 100;
+        return PRIORITY;
     }
 
     @Override

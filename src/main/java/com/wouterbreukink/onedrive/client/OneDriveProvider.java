@@ -19,6 +19,12 @@ public interface OneDriveProvider {
     OneDriveItem getRoot() throws IOException;
 
     OneDriveItem[] getChildren(OneDriveItem parent) throws IOException;
+    
+    default OneDriveItem[] getFolderDelta(OneDriveItem target) throws IOException {
+        return getFolderDelta(target, null);
+    }
+    
+    OneDriveItem[] getFolderDelta(OneDriveItem target, String token) throws IOException;
 
     OneDriveItem getPath(String path) throws IOException;
 

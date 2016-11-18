@@ -95,9 +95,11 @@ public class Main {
             return;
         }
 
-        if (getCommandLineOpts().getLocalPath() == null
-                || getCommandLineOpts().getRemotePath() == null
-                || getCommandLineOpts().getDirection() == null) {
+        if (
+            getCommandLineOpts().getLocalPath() == null || 
+            getCommandLineOpts().getRemotePath() == null || 
+            getCommandLineOpts().getDirection() == null
+        ) {
             log.error("Must specify --local, --remote and --direction");
             CommandLineOpts.printHelp();
             return;

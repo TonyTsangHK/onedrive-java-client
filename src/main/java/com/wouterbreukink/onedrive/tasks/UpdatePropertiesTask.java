@@ -15,6 +15,8 @@ import java.util.concurrent.TimeUnit;
 import static com.wouterbreukink.onedrive.CommandLineOpts.getCommandLineOpts;
 
 public class UpdatePropertiesTask extends Task {
+    public static final int PRIORITY = 50;
+    
     private static final Logger log = LoggerFactory.getLogger(UpdatePropertiesTask.class);
     private final OneDriveItem remoteFile;
     private final File localFile;
@@ -28,7 +30,7 @@ public class UpdatePropertiesTask extends Task {
     }
 
     public int priority() {
-        return 50;
+        return PRIORITY;
     }
 
     @Override

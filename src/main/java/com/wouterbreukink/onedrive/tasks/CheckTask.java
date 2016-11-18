@@ -14,6 +14,8 @@ import java.util.Map;
 import static com.wouterbreukink.onedrive.CommandLineOpts.getCommandLineOpts;
 
 public class CheckTask extends Task {
+    public static final int PRIORITY = 10;
+    
     private static final Logger log = LoggerFactory.getLogger(CheckTask.class);
 
     private final OneDriveItem remoteFile, remoteRoot;
@@ -28,7 +30,7 @@ public class CheckTask extends Task {
     }
 
     public int priority() {
-        return 10;
+        return PRIORITY;
     }
 
     @Override
@@ -69,7 +71,6 @@ public class CheckTask extends Task {
 
             // Iterate over all the remote files
             for (OneDriveItem remoteFile : remoteFiles) {
-
                 if (remoteFile.isDirectory() && !getCommandLineOpts().isRecursive()) {
                     continue;
                 }

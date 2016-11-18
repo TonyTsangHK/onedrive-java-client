@@ -16,6 +16,8 @@ import static com.wouterbreukink.onedrive.LogUtils.readableFileSize;
 import static com.wouterbreukink.onedrive.LogUtils.readableTime;
 
 public class DownloadTask extends Task {
+    private static final int PRIORITY = 50;
+    
     private static final Logger log = LoggerFactory.getLogger(DownloadTask.class);
     private final File parent;
     private final OneDriveItem remoteFile, remoteRoot;
@@ -35,7 +37,7 @@ public class DownloadTask extends Task {
     }
 
     public int priority() {
-        return 50;
+        return PRIORITY;
     }
 
     @Override
