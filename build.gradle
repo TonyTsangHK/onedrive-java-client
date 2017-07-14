@@ -30,12 +30,7 @@ allprojects {
 
 mainClassName = 'com.wouterbreukink.onedrive.Main'
 
-sourceCompatibility = 1.8
 version = file('src/main/resources/version').text
-
-repositories {
-    mavenCentral()
-}
 
 distZip {
     duplicatesStrategy= DuplicatesStrategy.EXCLUDE
