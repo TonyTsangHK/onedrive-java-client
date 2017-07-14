@@ -1,13 +1,13 @@
-rootProject.name = 'onedrive-java-client'
+rootProject.name = "onedrive-java-client"
 
-include 'Utilities'
-project(':Utilities').projectDir = file('../Utilities')
+include "Utilities"
+project(":Utilities").projectDir = file("../Utilities")
 
-include 'JSON'
-project(':JSON').projectDir = file('../JSON')
+include "JSON"
+project(":JSON").projectDir = file("../JSON")
 
-include 'ByteUtils'
-project(':ByteUtils').projectDir = file('../ByteUtils')
+include "ByteUtils"
+project(":ByteUtils").projectDir = file("../ByteUtils")
 
-include 'JsonUtils'
-project(':JsonUtils').projectDir = file('../JsonUtils')
+include "JsonUtils"
+project(":JsonUtils").projectDir = file("../JsonUtils")
