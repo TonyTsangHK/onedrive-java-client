@@ -80,11 +80,24 @@ public class DownloadTask extends Task {
                     // Remote file is empty, create a corresponding empty local file.
                     downloadFile = fileSystem.createFile(parent, remoteFile.getName());
 
-                    fileSystem.setAttributes(
-                        downloadFile,
-                        remoteFile.getCreatedDateTime(),
-                        remoteFile.getLastModifiedDateTime()
-                    );
+                    boolean fileExists = downloadFile.exists();
+                    
+                    // Create file if not exists
+                    if (!fileExists) {
+                        if (downloadFile.createNewFile()) {
+                            fileExists = downloadFile.exists();
+                        } else {
+                            log.error("Failed to create matching empty local file.");
+                        }
+                    }
+                    
+                    if (fileExists) {
+                        fileSystem.setAttributes(
+                            downloadFile,
+                            remoteFile.getCreatedDateTime(),
+                            remoteFile.getLastModifiedDateTime()
+                        );
+                    }
 
                     reporter.fileDownloaded(replace, remoteFile.getSize());
                 } else if (canDownload(remoteFile)) {
